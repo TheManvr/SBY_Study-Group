@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Study Group</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; font-family: 'Kanit', sans-serif; margin: 0; padding: 0; }
+        body { background: #f0f2f5; height: 100vh; display: flex; flex-direction: column; }
+        
+        /* Navbar */
+        nav { height: 60px; background: white; border-bottom: 1px solid #ddd; display: flex; align-items: center; padding: 0 20px; justify-content: space-between; }
+        nav h1 { font-size: 1.2rem; color: #fa4299; }
+        .btn-home { text-decoration: none; color: #333; font-weight: 500; }
+
+        /* Container */
+        .chat-container { display: flex; flex: 1; overflow: hidden; }
+
+        /* Sidebar (Inbox) */
+        .sidebar { width: 300px; background: white; border-right: 1px solid #ddd; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 15px; font-weight: bold; border-bottom: 1px solid #eee; }
+        .inbox-list { flex: 1; overflow-y: auto; }
+        .inbox-item { display: flex; align-items: center; padding: 15px; cursor: pointer; transition: 0.2s; border-bottom: 1px solid #f9f9f9; }
+        .inbox-item:hover { background: #fff0f6; }
+        .inbox-item.active { background: #ffe6f0; border-left: 4px solid #fa4299; }
+        .inbox-avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; object-fit: cover; }
+        .inbox-info h4 { font-size: 0.95rem; color: #333; }
+        .inbox-info p { font-size: 0.8rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+
+        /* Chat Area */
+        .chat-area { flex: 1; display: flex; flex-direction: column; background: #fff; }
+        .chat-header { padding: 15px; border-bottom: 1px solid #ddd; background: #fff; display: flex; align-items: center; }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; background: #f8f9fa; display: flex; flex-direction: column; gap: 10px; }
+        
+        /* Message Bubbles */
+        .msg { max-width: 70%; padding: 10px 15px; border-radius: 20px; font-size: 0.95rem; position: relative; word-wrap: break-word; }
+        .msg.me { align-self: flex-end; background: #fa4299; color: white; border-bottom-right-radius: 5px; }
+        .msg.other { align-self: flex-start; background: #e4e6eb; color: #333; border-bottom-left-radius: 5px; }
+        .msg-time { font-size: 0.65rem; margin-top: 5px; opacity: 0.7; text-align: right; }
+
+        /* Input Area */
+        .chat-input { padding: 15px; border-top: 1px solid #ddd; display: flex; gap: 10px; background: white; }
+        .chat-input input { flex: 1; padding: 10px 15px; border-radius: 20px; border: 1px solid #ddd; outline: none; }
+        .chat-input button { background: #fa4299; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; }
+        .chat-input button:hover { background: #d63384; }
+
+        /* No Chat Selected State */
+        .no-chat-selected { flex: 1; display: flex; align-items: center; justify-content: center; color: #888; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <h1>Study Group Chat</h1>
+        <a href="dashboard.html" class="btn-home"><i class="fas fa-home"></i> กลับหน้าหลัก</a>
+    </nav>
+
+    <div class="chat-container">
+        <div class="sidebar">
+            <div class="sidebar-header">ข้อความของคุณ</div>
+            <div class="inbox-list" id="inboxList">
+                </div>
+        </div>
+
+        <div class="chat-area" id="chatArea">
+            <div class="no-chat-selected">เลือกเพื่อนเพื่อเริ่มแชท</div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_API = 'http://localhost:3000';
+        let currentUser = null;
+        let currentChatPartnerId = null;
+        let chatPollInterval = null;
+
+        // เริ่มทำงาน
+        document.addEventListener('DOMContentLoaded', async () => {
+            const userJson = localStorage.getItem('currentUser');
+            if (!userJson) {
+                alert('กรุณาเข้าสู่ระบบ');
+                window.location.href = 'index.html';
+                return;
+            }
+            currentUser = JSON.parse(userJson);
+
+            // ตรวจสอบว่า URL มีพารามิเตอร์ ?uid=xxx หรือไม่ (กดมาจากหน้า Profile)
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetId = urlParams.get('uid');
+
+            await loadInbox(); // โหลดรายชื่อด้านซ้าย
+
+            if (targetId) {
+                // ถ้ามี targetId ให้เปิดแชทกับคนนั้นทันที
+                openChat(targetId);
+            }
+        });
+
+        // 1. โหลด Inbox
+        async function loadInbox() {
+            try {
+                const res = await fetch(`${BASE_API}/api/chat/inbox/${currentUser.id}`);
+                const inboxData = await res.json();
+                
+                const inboxList = document.getElementById('inboxList');
+                inboxList.innerHTML = inboxData.map(user => `
+                    <div class="inbox-item ${currentChatPartnerId == user.id ? 'active' : ''}" onclick="openChat('${user.id}', '${user.name}', '${user.avatar}')">
+                        <img src="${user.avatar || 'https://via.placeholder.com/40'}" class="inbox-avatar">
+                        <div class="inbox-info">
+                            <h4>${user.name}</h4>
+                            <p>${user.lastMessage || 'เริ่มสนทนา...'}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) { console.error("Error loading inbox", err); }
+        }
+
+        // 2. เปิดห้องแชท
+        async function openChat(partnerId, partnerName = 'Loading...', partnerAvatar = '') {
+            currentChatPartnerId = partnerId;
+            
+            // UI Setup
+            const chatArea = document.getElementById('chatArea');
+            chatArea.innerHTML = `
+                <div class="chat-header">
+                    <img src="${partnerAvatar || 'https://via.placeholder.com/40'}" style="width:35px; height:35px; border-radius:50%; margin-right:10px; object-fit:cover;" id="headerAvatar">
+                    <h3 id="headerName">${partnerName}</h3>
+                </div>
+                <div class="chat-messages" id="chatMessages">Loading...</div>
+                <div class="chat-input">
+                    <input type="text" id="msgInput" placeholder="พิมพ์ข้อความ..." onkeypress="handleEnter(event)">
+                    <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            `;
+
+            // ถ้าไม่มีชื่อ (กรณีมาจาก Link) ให้ไป fetch ชื่อมาใส่ (Optional)
+            if(partnerName === 'Loading...') {
+               // คุณอาจจะเพิ่ม API fetchUserById เพื่อดึงชื่อมาแสดงให้สวยงามได้ตรงนี้
+            }
+
+            // เริ่มโหลดข้อความและตั้งเวลาดึงข้อความใหม่ทุก 2 วิ
+            loadMessages();
+            if (chatPollInterval) clearInterval(chatPollInterval);
+            chatPollInterval = setInterval(loadMessages, 2000);
+            
+            // อัปเดตสี Active ที่ Inbox
+            loadInbox(); 
+        }
+
+        // 3. โหลดข้อความ (History)
+        async function loadMessages() {
+            if (!currentChatPartnerId) return;
+            try {
+                const res = await fetch(`${BASE_API}/api/chat/history?userId=${currentUser.id}&partnerId=${currentChatPartnerId}`);
+                const messages = await res.json();
+                
+                const container = document.getElementById('chatMessages');
+                if(!container) return;
+
+                // ตรวจสอบว่า Scroll อยู่ล่างสุดไหม
+                const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+
+                container.innerHTML = messages.map(msg => {
+                    const isMe = String(msg.senderId) === String(currentUser.id);
+                    return `
+                        <div class="msg ${isMe ? 'me' : 'other'}">
+                            ${msg.text}
+                            <div class="msg-time">${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                if (isAtBottom) container.scrollTop = container.scrollHeight;
+            } catch (err) { console.error("Error loading messages", err); }
+        }
+
+        // 4. ส่งข้อความ
+        async function sendMessage() {
+            const input = document.getElementById('msgInput');
+            const text = input.value.trim();
+            if (!text || !currentChatPartnerId) return;
+
+            try {
+                await fetch(`${BASE_API}/api/chat/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        senderId: currentUser.id,
+                        recipientId: currentChatPartnerId,
+                        text: text
+                    })
+                });
+                input.value = '';
+                loadMessages(); // โหลดใหม่ทันที
+                loadInbox();    // อัปเดต Inbox ว่ามีข้อความล่าสุด
+            } catch (err) { console.error("Send failed", err); }
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ชุมชนและการแบ่งปัน - Community Post</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        /* --- Reset & Global --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
+        
+        body { 
+            background-color: #f8f9fa; 
+            color: #333; 
+            overflow-y: scroll;
+        }
+
+        :root {
+            --primary-pink: #fa4299; 
+            --hover-pink: #ff2d78;
+        }
+
+        /* --- Navbar CSS --- */
+        nav {
+            height: 80px; background: #fff; display: flex; justify-content: space-between; align-items: center;
+            padding: 0 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            position: sticky; top: 0; z-index: 1000; font-family: 'Kanit', sans-serif;
+        }
+
+        .nav-left { display: flex; align-items: center; gap: 15px; }
+        .nav-logo img { height: 45px; display: block; }
+        .nav-brand { font-size: 20px; font-weight: 700; color: #ff2d78; }
+        
+        /* เมนูตรงกลาง */
+        .nav-menu { 
+            position: absolute; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            display: flex; 
+            gap: 40px; 
+        }
+        .nav-menu a { 
+            text-decoration: none; color: #555; font-size: 16px; font-weight: 500; 
+            padding: 8px 12px; transition: all 0.3s ease;
+        }
+        .nav-menu a:hover, .nav-menu a.active { 
+            color: #ff2d78; background: #fff0f5; border-radius: 8px;
+        }
+        
+        .nav-right { display: flex; align-items: center; gap: 15px; position: relative; }
+        
+        /* ปุ่มต่างๆ */
+        .btn-login {
+            border: 2px solid #333; color: #333 !important; padding: 8px 20px; 
+            border-radius: 30px; font-weight: 600; text-decoration: none; transition: 0.3s;
+        }
+        .btn-login:hover { background: #333; color: white !important; }
+
+        @media (max-width: 1000px) {
+            .nav-menu { display: none; }
+            .nav-brand { display: none; }
+        }
+
+        /* --- Notification Styles (เหมือน Dashboard เป๊ะๆ) --- */
+        .noti-icon-container { position: relative; cursor: pointer; margin-right: 15px; }
+        .noti-icon { font-size: 24px; color: #555; transition: 0.3s; }
+        .noti-icon:hover { color: #ff2d78; transform: rotate(15deg); }
+        .noti-badge {
+            position: absolute; top: -5px; right: -5px;
+            background: #ff2d78; color: white; font-size: 10px; font-weight: bold;
+            min-width: 18px; height: 18px; border-radius: 50%;
+            display: none; justify-content: center; align-items: center; border: 2px solid white;
+        }
+        .noti-dropdown {
+            position: absolute; top: 45px; right: -10px; width: 320px;
+            background: white; border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15); z-index: 2000;
+            overflow: hidden; display: none; border: 1px solid #eee;
+        }
+        .noti-dropdown.active { display: block; animation: fadeInDrop 0.2s ease; }
+        @keyframes fadeInDrop { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .noti-header {
+            background: #ff2d78; color: white; padding: 12px 15px;
+            font-weight: 600; font-size: 14px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .noti-content { max-height: 300px; overflow-y: auto; }
+        .noti-item {
+            padding: 12px 15px; border-bottom: 1px solid #f0f0f0;
+            display: flex; gap: 10px; align-items: start; transition: 0.2s; cursor: pointer;
+        }
+        .noti-item:hover { background: #fff0f5; }
+        .noti-item.unread { background: #fdfdfd; border-left: 4px solid #ff2d78; }
+        .noti-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .noti-text { font-size: 13px; color: #333; }
+        .noti-text strong { color: #ff2d78; }
+        .noti-time { font-size: 11px; color: #999; margin-top: 4px; display: block; }
+        .no-noti { padding: 20px; text-align: center; color: #aaa; font-size: 13px; }
+        
+        /* =========================================
+           --- ส่วนหน้า POST (Community Feed) ---
+           ========================================= */
+        
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Grid Layout */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+
+        /* --- Create Post Card --- */
+        .create-post-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+        .create-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .user-avatar {
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #f0f2f5;
+        }
+        .post-input {
+            flex: 1;
+            background: #f0f2f5;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 20px;
+            font-family: inherit;
+            outline: none;
+            resize: none;
+            height: 45px;
+            transition: 0.3s;
+        }
+        .post-input:focus {
+            background: #e4e6eb;
+            height: 80px;
+        }
+        .create-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        .action-btn {
+            background: none; border: none;
+            color: #65676b; cursor: pointer;
+            font-size: 0.95em; display: flex; align-items: center; gap: 8px;
+            padding: 8px 12px; border-radius: 8px;
+            transition: 0.2s;
+        }
+        .action-btn:hover { background: #f2f2f2; }
+        .action-btn.photo { color: #45bd62; }
+        
+        .btn-post-submit {
+            background: #fa4299; color: white;
+            border: none; padding: 8px 25px;
+            border-radius: 20px; font-weight: bold;
+            cursor: pointer; transition: 0.3s;
+        }
+        .btn-post-submit:hover { background: #d63380; }
+
+        /* --- Post Feed Card --- */
+        .post-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            overflow: hidden;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .post-header {
+            padding: 15px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .post-info h4 { margin: 0; font-size: 1em; color: #333; }
+        .post-info span { font-size: 0.8em; color: #888; }
+        
+        .post-content { padding: 0 15px 15px 15px; font-size: 1em; line-height: 1.6; }
+        .post-image { width: 100%; display: block; margin-top: 10px; cursor: pointer; }
+
+        .post-footer {
+            padding: 10px 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 5px;
+        }
+        .post-action {
+            flex: 1;
+            background: white; border: none;
+            padding: 8px; border-radius: 5px;
+            color: #606770; font-weight: 600;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;
+            transition: 0.2s;
+        }
+        .post-action:hover { background: #f2f2f2; }
+        .post-action.liked { color: #fa4299; }
+
+        /* --- Sidebar --- */
+        .widget-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .widget-title { font-weight: bold; color: #333; margin-bottom: 15px; display: flex; justify-content: space-between; }
+        .topic-list { list-style: none; padding: 0; margin: 0; }
+        .topic-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 0; border-bottom: 1px solid #f5f5f5;
+            cursor: pointer; transition: 0.2s;
+        }
+        .topic-item:last-child { border-bottom: none; }
+        .topic-item:hover { transform: translateX(5px); }
+        .hashtag { color: #fa4299; font-weight: bold; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .layout-grid { grid-template-columns: 1fr; } 
+            .sidebar { display: none; } 
+        }
+
+        /* --- Chat CSS --- */
+        .chat-toggle-btn { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #fa4299; color: white; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; z-index: 9999; transition: transform 0.3s; }
+        .chat-toggle-btn:hover { transform: scale(1.1); }
+        .chat-box { position: fixed; bottom: 90px; right: 20px; width: 320px; height: 450px; background: white; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.15); display: none; flex-direction: column; overflow: hidden; z-index: 9999; border: 1px solid #eee; }
+        .chat-header { background: #fa4299; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .chat-close { cursor: pointer; font-size: 20px; }
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; }
+        .msg-row { display: flex; align-items: flex-end; gap: 8px; }
+        .msg-row.me { flex-direction: row-reverse; }
+        .msg-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; }
+        .msg-bubble { max-width: 70%; padding: 8px 12px; border-radius: 15px; font-size: 14px; word-wrap: break-word; }
+        .msg-row.other .msg-bubble { background: #e4e6eb; color: #333; border-bottom-left-radius: 2px; }
+        .msg-row.me .msg-bubble { background: #fa4299; color: white; border-bottom-right-radius: 2px; }
+        .msg-name { font-size: 10px; color: #888; margin-bottom: 2px; }
+        .msg-row.me .msg-name { text-align: right; }
+        .chat-input-area { padding: 10px; border-top: 1px solid #eee; background: white; display: flex; gap: 5px; }
+        .chat-input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 8px 15px; outline: none; }
+        .chat-send-btn { background: #fa4299; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-left">
+            <a href="main.html" class="nav-logo">
+                <img src="images/Logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/150x50?text=LOGO'">
+            </a>
+            <span class="nav-brand"></span>
+        </div>
+       
+       <div class="nav-menu">
+            <a href="main.html">หน้าแรก</a>
+            <a href="dashboard.html">บอร์ด</a>
+            <a href="tutor.html">ผู้คน</a>
+            <a href="aboutus.html">เกี่ยวกับ</a>
+            <a href="feed.html" class="active">โพสต์</a>    
+            <a href="ebook.html">E-Book</a>
+        </div>
+        
+        <div class="nav-right" id="navRightContent">
+            <a href="login.html" class="btn-login">เข้าสู่ระบบ</a>
+        </div>
+    </nav>
+
+    <template id="loggedInTemplate">
+        <div class="noti-icon-container" onclick="toggleNotification(event)">
+            <i class="fas fa-bell noti-icon"></i>
+            <span class="noti-badge" id="notiCount">0</span>
+            
+            <div class="noti-dropdown" id="notiDropdown">
+                <div class="noti-header">
+                    <span>การแจ้งเตือน</span>
+                    <span style="cursor:pointer; font-size:12px;" onclick="markAllRead()">อ่านทั้งหมด</span>
+                </div>
+                <div class="noti-content" id="notiList">
+                    <div class="no-noti">กำลังโหลด...</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="window.location.href='profile.html'">
+            <img id="userAvatar" src="images/default-avatar.png" style="width:40px; height:40px; border-radius:50%; border:2px solid #ff2d78; object-fit:cover;">
+            <span id="userName" style="font-weight:600; color:#333;">Username</span>
+        </div>
+        
+        <a href="#" onclick="logout()" style="color:#888; font-size:18px; margin-left:10px;" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i></a>
+    </template>
+
+    <div class="container">
+        <div class="layout-grid">
+            
+            <section class="main-feed" id="feedContainer">
+                
+                <div class="create-post-card">
+                    <div class="create-header">
+                        <img src="https://via.placeholder.com/150/ffcfdf/fa4299?text=Me" class="user-avatar" alt="Me" id="feedUserAvatar">
+                        <textarea id="postInput" class="post-input" placeholder="คุณกำลังคิดอะไรอยู่? แบ่งปันความรู้กันเถอะ..."></textarea>
+                    </div>
+                    <div class="create-actions">
+                        <button class="action-btn photo">
+                            <i class="fas fa-images"></i> รูปภาพ/วิดีโอ
+                        </button>
+                        <button class="action-btn">
+                            <i class="fas fa-smile" style="color: #f7b928;"></i> ความรู้สึก
+                        </button>
+                        <button class="btn-post-submit" onclick="createNewPost()">โพสต์</button>
+                    </div>
+                </div>
+
+                <div class="post-card">
+                    <div class="post-header">
+                        <img src="https://via.placeholder.com/150/b2dfdb/00897b?text=Dev" class="user-avatar" alt="User">
+                        <div class="post-info">
+                            <h4>DevMaster Pro</h4>
+                            <span>2 ชั่วโมงที่แล้ว • <i class="fas fa-globe-asia"></i></span>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        วันนี้นั่งแก้บั๊ก CSS ทั้งวัน ในที่สุดก็เจอสาเหตุ! ใครเคยเจอปัญหา z-index ไม่ทำงานบ้างครับ? 😅 <br>
+                        #WebDev #CSSLife
+                    </div>
+                    <img src="https://via.placeholder.com/600x300/f0f2f5/aaaaaa?text=Code+Screen+Example" class="post-image" alt="Post Image">
+                    <div class="post-footer">
+                        <button class="post-action" onclick="toggleLike(this)"><i class="far fa-thumbs-up"></i> ถูกใจ</button>
+                        <button class="post-action"><i class="far fa-comment-alt"></i> แสดงความคิดเห็น</button>
+                        <button class="post-action"><i class="far fa-share-square"></i> แชร์</button>
+                    </div>
+                </div>
+
+                <div class="post-card">
+                    <div class="post-header">
+                        <img src="https://via.placeholder.com/150/e1bee7/8e24aa?text=Stu" class="user-avatar" alt="User">
+                        <div class="post-info">
+                            <h4>Nong Fah Learning</h4>
+                            <span>5 นาทีที่แล้ว • <i class="fas fa-globe-asia"></i></span>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        สอบถามพี่ๆ หน่อยค่ะ คอร์ส Python พื้นฐาน เริ่มเรียนจากที่ไหนดีคะ? แนะนำหน่อยค่า 🙏
+                    </div>
+                    <div class="post-footer">
+                        <button class="post-action" onclick="toggleLike(this)"><i class="far fa-thumbs-up"></i> ถูกใจ</button>
+                        <button class="post-action"><i class="far fa-comment-alt"></i> แสดงความคิดเห็น</button>
+                        <button class="post-action"><i class="far fa-share-square"></i> แชร์</button>
+                    </div>
+                </div>
+
+            </section>
+
+            <aside class="sidebar">
+                
+                <div class="widget-card">
+                    <div class="widget-title">
+                        หัวข้อกำลังฮิต <i class="fas fa-fire-alt" style="color: orangered;"></i>
+                    </div>
+                    <ul class="topic-list">
+                        <li class="topic-item">
+                            <span class="hashtag">#CodingChallenge</span>
+                            <small style="color:#999; margin-left:auto;">1.2k โพสต์</small>
+                        </li>
+                        <li class="topic-item">
+                            <span class="hashtag">#ReactJS</span>
+                            <small style="color:#999; margin-left:auto;">850 โพสต์</small>
+                        </li>
+                        <li class="topic-item">
+                            <span class="hashtag">#ถามตอบการบ้าน</span>
+                            <small style="color:#999; margin-left:auto;">500 โพสต์</small>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="widget-card">
+                    <div class="widget-title">กฎชุมชน <i class="fas fa-shield-alt" style="color: #fa4299;"></i></div>
+                    <div style="font-size: 0.9em; color: #555; line-height: 1.6;">
+                        1. พูดจาสุภาพ ให้เกียรติกัน<br>
+                        2. ไม่โพสต์สแปม หรือโฆษณา<br>
+                        3. แบ่งปันความรู้เป็นหลัก<br>
+                        <a href="#" style="color: #fa4299; text-decoration: none; display:block; margin-top:10px;">อ่านเพิ่มเติม...</a>
+                        
+                    </div>
+                </div>
+
+            </aside>
+        </div>
+    </div>
+
+    <div class="chat-toggle-btn" onclick="toggleChat()">
+        <i class="fas fa-comment-dots"></i>
+    </div>
+    <div class="chat-box" id="chatBox">
+        <div class="chat-header">
+            <span><i class="fas fa-comments"></i> Community Chat</span>
+            <span class="chat-close" onclick="toggleChat()">×</span>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div style="text-align:center; color:#999; margin-top:20px;">กำลังโหลด...</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" class="chat-input" placeholder="พิมพ์ข้อความ..." onkeypress="handleEnter(event)">
+            <button class="chat-send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        const BASE_API = 'http://localhost:3000'; 
+
+        // --- 1. ตรวจสอบ Login / Notification ---
+        document.addEventListener('DOMContentLoaded', () => {
+            checkLoginStatus();
+            
+            // ถ้าล็อกอินอยู่ ให้เริ่มดึงข้อมูลแจ้งเตือน
+            if(localStorage.getItem('currentUser')) {
+                loadNotifications();
+                setInterval(loadNotifications, 5000); 
+            }
+
+            // คลิกที่อื่นเพื่อปิด Dropdown
+            window.addEventListener('click', (e) => {
+                const notiContainer = document.getElementById('notiContainer');
+                if (notiContainer && !notiContainer.contains(e.target)) {
+                    const dropdown = document.getElementById('notiDropdown');
+                    if(dropdown) dropdown.classList.remove('active');
+                }
+            });
+        });
+
+        function checkLoginStatus() {
+            const userJson = localStorage.getItem('currentUser');
+            const navRight = document.getElementById('navRightContent');
+            const template = document.getElementById('loggedInTemplate');
+
+            if (userJson && template) {
+                const user = JSON.parse(userJson);
+                
+                // เอา Template มาใส่ใน Navbar
+                const content = template.content.cloneNode(true);
+                navRight.innerHTML = ''; 
+                navRight.appendChild(content);
+
+                // ใส่ข้อมูล user
+                const userNameEl = document.getElementById('userName');
+                const userAvatarEl = document.getElementById('userAvatar');
+                const feedUserAvatar = document.getElementById('feedUserAvatar'); // รูปในกล่องโพสต์
+
+                if(userNameEl) userNameEl.textContent = user.username || user.name;
+                
+                const avatarSrc = (user.avatar && user.avatar.length > 10) 
+                    ? user.avatar 
+                    : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
+                if(userAvatarEl) userAvatarEl.src = avatarSrc;
+                if(feedUserAvatar) feedUserAvatar.src = avatarSrc; // อัปเดตรูปตรงกล่องโพสต์ด้วย
+            }
+        }
+
+        function logout() {
+            Swal.fire({
+                title: 'ออกจากระบบ?',
+                icon: 'question', showCancelButton: true, confirmButtonColor: '#fa4299',
+                cancelButtonText: 'ยกเลิก', confirmButtonText: 'ใช่, ออกจากระบบ'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('currentUser');
+                    window.location.reload();
+                }
+            });
+        }
+
+        // --- Notification Logic ---
+        function toggleNotification(event) {
+            if(event) event.stopPropagation();
+            const dropdown = document.getElementById('notiDropdown');
+            if(dropdown) dropdown.classList.toggle('active');
+        }
+
+        async function loadNotifications() {
+            const userJson = localStorage.getItem('currentUser');
+            if (!userJson) return;
+            const user = JSON.parse(userJson);
+            const list = document.getElementById('notiList');
+            const badge = document.getElementById('notiCount');
+
+            try {
+                if(!list) return;
+
+                const res = await fetch(`${BASE_API}/api/notifications?userId=${user.id}`);
+                const notifications = await res.json();
+                
+                if (!Array.isArray(notifications)) return;
+
+                const unreadCount = notifications.filter(n => !n.read).length;
+
+                if (unreadCount > 0) {
+                    badge.style.display = 'flex';
+                    badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                } else {
+                    badge.style.display = 'none';
+                }
+
+                if (notifications.length === 0) {
+                    list.innerHTML = '<div class="no-noti">ไม่มีการแจ้งเตือน</div>';
+                } else {
+                    list.innerHTML = notifications.map(item => `
+                        <div class="noti-item ${item.read ? '' : 'unread'}">
+                            <img src="${item.senderAvatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="noti-avatar">
+                            <div style="flex:1">
+                                <div class="noti-text">
+                                    <strong>${item.senderName}</strong> ${item.message}
+                                </div>
+                                <span class="noti-time">${item.time}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error("โหลดแจ้งเตือนไม่สำเร็จ", error);
+            }
+        }
+
+        function markAllRead() {
+            document.getElementById('notiCount').style.display = 'none';
+        }
+
+        // --- Chat Logic ---
+        let isChatOpen = false;
+        let chatInterval = null;
+
+        function toggleChat() {
+            const box = document.getElementById('chatBox');
+            isChatOpen = !isChatOpen;
+            box.style.display = isChatOpen ? 'flex' : 'none';
+            if (isChatOpen) {
+                loadMessages(); 
+                chatInterval = setInterval(loadMessages, 3000); 
+                scrollToBottom();
+            } else {
+                clearInterval(chatInterval); 
+            }
+        }
+
+        async function loadMessages() {
+            try {
+                const res = await fetch(`${BASE_API}/api/chat`);
+                if (!res.ok) return; 
+                const messages = await res.json();
+                renderMessages(messages);
+            } catch (err) { console.error("Chat Error:", err); }
+        }
+
+        function renderMessages(messages) {
+            const container = document.getElementById('chatMessages');
+            const userJson = localStorage.getItem("currentUser");
+            const currentUser = userJson ? JSON.parse(userJson) : null;
+            const myName = currentUser ? currentUser.name : "";
+            const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+
+            container.innerHTML = messages.map(msg => {
+                const isMe = msg.sender === myName;
+                return `
+                    <div class="msg-row ${isMe ? 'me' : 'other'}">
+                        ${!isMe ? `<img src="${msg.avatar || 'https://via.placeholder.com/30'}" class="msg-avatar">` : ''}
+                        <div>
+                            <div class="msg-name">${msg.sender}</div>
+                            <div class="msg-bubble">${msg.text}</div>
+                        </div>
+                        ${isMe ? `<img src="${msg.avatar || 'https://via.placeholder.com/30'}" class="msg-avatar">` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            if (isAtBottom) scrollToBottom();
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            const userJson = localStorage.getItem("currentUser");
+            
+            if (!userJson) {
+                Swal.fire('เข้าสู่ระบบก่อน', 'กรุณาเข้าสู่ระบบเพื่อใช้งานแชท', 'warning');
+                return;
+            }
+            if (!text) return;
+            const user = JSON.parse(userJson);
+
+            try {
+                await fetch(`${BASE_API}/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sender: user.name,
+                        avatar: user.avatar,
+                        text: text
+                    })
+                });
+                input.value = ''; 
+                loadMessages(); 
+            } catch (e) { console.log("ส่งข้อความไม่ได้"); }
+        }
+
+        function handleEnter(e) { if (e.key === 'Enter') sendMessage(); }
+        function scrollToBottom() {
+            const container = document.getElementById('chatMessages');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // --- Feed Logic ---
+        function toggleLike(btn) {
+            btn.classList.toggle('liked');
+            const icon = btn.querySelector('i');
+            if (btn.classList.contains('liked')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+            }
+        }
+
+        function createNewPost() {
+            const input = document.getElementById('postInput');
+            const text = input.value.trim();
+            
+            if (!text) {
+                alert("กรุณาพิมพ์ข้อความก่อนโพสต์ครับ");
+                return;
+            }
+
+            const userJson = localStorage.getItem('currentUser');
+            const user = userJson ? JSON.parse(userJson) : { name: "Guest", avatar: "" };
+            const avatar = (user.avatar && user.avatar.length > 10) ? user.avatar : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
+            const newPostHTML = `
+                <div class="post-card">
+                    <div class="post-header">
+                        <img src="${avatar}" class="user-avatar" alt="Me">
+                        <div class="post-info">
+                            <h4>${user.name}</h4>
+                            <span>เมื่อสักครู่ • <i class="fas fa-globe-asia"></i></span>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        ${text.replace(/\n/g, '<br>')}
+                    </div>
+                    <div class="post-footer">
+                        <button class="post-action" onclick="toggleLike(this)"><i class="far fa-thumbs-up"></i> ถูกใจ</button>
+                        <button class="post-action"><i class="far fa-comment-alt"></i> แสดงความคิดเห็น</button>
+                        <button class="post-action"><i class="far fa-share-square"></i> แชร์</button>
+                    </div>
+                </div>
+            `;
+
+            const createCard = document.querySelector('.create-post-card');
+            createCard.insertAdjacentHTML('afterend', newPostHTML);
+
+            input.value = '';
+            input.style.height = '45px';
+        }
+    </script>
+
+</body>
+</html>

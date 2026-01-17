@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Book Library</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        /* --- Reset & Global --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
+        
+        body { 
+            background-color: #f8f9fa; 
+            color: #333; 
+            overflow-y: scroll;
+        }
+
+        :root {
+            --primary-pink: #fa4299; 
+            --hover-pink: #ff2d78;
+        }
+
+        /* --- Navbar CSS (เหมือน Dashboard) --- */
+        nav {
+            height: 80px; background: #fff; display: flex; justify-content: space-between; align-items: center;
+            padding: 0 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            position: sticky; top: 0; z-index: 1000; font-family: 'Kanit', sans-serif;
+        }
+
+        .nav-left { display: flex; align-items: center; gap: 15px; }
+        .nav-logo img { height: 45px; display: block; }
+        
+        .nav-menu { 
+            position: absolute; left: 50%; transform: translateX(-50%); 
+            display: flex; gap: 40px; 
+        }
+        .nav-menu a { 
+            text-decoration: none; color: #555; font-size: 16px; font-weight: 500; 
+            padding: 8px 12px; transition: all 0.3s ease;
+        }
+        .nav-menu a:hover, .nav-menu a.active { 
+            color: #ff2d78; background: #fff0f5; border-radius: 8px;
+        }
+        
+        .nav-right { 
+            display: flex; align-items: center; gap: 15px; position: relative; 
+        }
+        
+        .btn-login {
+            border: 2px solid #333; color: #333 !important; padding: 8px 20px; 
+            border-radius: 30px; font-weight: 600; text-decoration: none; transition: 0.3s;
+        }
+        .btn-login:hover { background: #333; color: white !important; }
+
+        @media (max-width: 1000px) {
+            .nav-menu { display: none; }
+        }
+
+        /* --- Notification Styles (เหมือน Dashboard เป๊ะๆ) --- */
+        .noti-icon-container { position: relative; cursor: pointer; margin-right: 15px; }
+        .noti-icon { font-size: 24px; color: #555; transition: 0.3s; }
+        .noti-icon:hover { color: #ff2d78; transform: rotate(15deg); }
+        .noti-badge {
+            position: absolute; top: -5px; right: -5px;
+            background: #ff2d78; color: white; font-size: 10px; font-weight: bold;
+            min-width: 18px; height: 18px; border-radius: 50%;
+            display: none; justify-content: center; align-items: center; border: 2px solid white;
+        }
+        .noti-dropdown {
+            position: absolute; top: 45px; right: -10px; width: 320px;
+            background: white; border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15); z-index: 2000;
+            overflow: hidden; display: none; border: 1px solid #eee;
+        }
+        .noti-dropdown.active { display: block; animation: fadeInDrop 0.2s ease; }
+        @keyframes fadeInDrop { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .noti-header {
+            background: #ff2d78; color: white; padding: 12px 15px;
+            font-weight: 600; font-size: 14px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .noti-content { max-height: 300px; overflow-y: auto; }
+        .noti-item {
+            padding: 12px 15px; border-bottom: 1px solid #f0f0f0;
+            display: flex; gap: 10px; align-items: start; transition: 0.2s; cursor: pointer;
+        }
+        .noti-item:hover { background: #fff0f5; }
+        .noti-item.unread { background: #fdfdfd; border-left: 4px solid #ff2d78; }
+        .noti-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .noti-text { font-size: 13px; color: #333; }
+        .noti-text strong { color: #ff2d78; }
+        .noti-time { font-size: 11px; color: #999; margin-top: 4px; display: block; }
+        .no-noti { padding: 20px; text-align: center; color: #aaa; font-size: 13px; }
+
+        /* --- E-BOOK Specific Styles --- */
+        .ebook-hero {
+            background: linear-gradient(135deg, #fa4299 0%, #ff8eb3 100%);
+            padding: 60px 20px; text-align: center; color: white; margin-bottom: 40px;
+        }
+        .ebook-hero h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
+        .ebook-hero p { font-size: 1.1em; opacity: 0.9; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 80px 20px; }
+
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .section-title { font-size: 1.5em; color: #333; position: relative; padding-left: 15px; }
+        .section-title::before {
+            content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+            height: 70%; width: 5px; background: #fa4299; border-radius: 3px;
+        }
+        .view-all { color: #fa4299; text-decoration: none; font-size: 0.9em; }
+
+        .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 30px; margin-bottom: 50px; }
+        .book-card {
+            background: white; border-radius: 15px; overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08); transition: all 0.3s ease; border: 1px solid transparent;
+        }
+        .book-card:hover { transform: translateY(-10px); box-shadow: 0 15px 35px rgba(250, 66, 153, 0.2); border-color: #ffd1e3; }
+
+        .book-cover-wrapper { position: relative; overflow: hidden; height: 320px; }
+        .book-cover { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .book-card:hover .book-cover { transform: scale(1.05); }
+        .badge {
+            position: absolute; top: 15px; left: 15px; padding: 5px 12px;
+            border-radius: 20px; color: white; font-size: 0.8em; font-weight: bold; z-index: 2;
+        }
+        .badge.new { background: #00c853; }
+        .badge.hot { background: #ff6b6b; }
+
+        .book-info { padding: 15px; }
+        .book-cat { color: #fa4299; font-size: 0.8em; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .book-title { font-size: 1.1em; font-weight: bold; margin: 5px 0; color: #333; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; height: 2.4em; }
+        .book-author { font-size: 0.9em; color: #777; margin-bottom: 15px; }
+        .book-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 15px; }
+        .price { font-size: 1.2em; font-weight: bold; color: #333; }
+        .price .currency { font-size: 0.7em; vertical-align: top; }
+        .btn-buy {
+            background: white; color: #fa4299; border: 2px solid #fa4299;
+            padding: 6px 15px; border-radius: 20px; cursor: pointer; font-weight: 600;
+            transition: 0.3s; text-decoration: none; font-size: 0.9em;
+        }
+        .btn-buy:hover { background: #fa4299; color: white; }
+
+        /* --- Chat CSS --- */
+        .chat-toggle-btn {
+            position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px;
+            background: #fa4299; color: white; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; z-index: 9999; transition: transform 0.3s;
+        }
+        .chat-toggle-btn:hover { transform: scale(1.1); }
+        .chat-box {
+            position: fixed; bottom: 90px; right: 20px; width: 320px; height: 450px;
+            background: white; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.15); display: none; 
+            flex-direction: column; overflow: hidden; z-index: 9999; border: 1px solid #eee;
+        }
+        .chat-header { background: #fa4299; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; }
+        .msg-row { display: flex; align-items: flex-end; gap: 8px; }
+        .msg-row.me { flex-direction: row-reverse; }
+        .msg-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; }
+        .msg-bubble { max-width: 70%; padding: 8px 12px; border-radius: 15px; font-size: 14px; word-wrap: break-word; }
+        .msg-row.other .msg-bubble { background: #e4e6eb; color: #333; border-bottom-left-radius: 2px; }
+        .msg-row.me .msg-bubble { background: #fa4299; color: white; border-bottom-right-radius: 2px; }
+        .msg-name { font-size: 10px; color: #888; margin-bottom: 2px; }
+        .msg-row.me .msg-name { text-align: right; }
+        .chat-input-area { padding: 10px; border-top: 1px solid #eee; background: white; display: flex; gap: 5px; }
+        .chat-input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 8px 15px; outline: none; }
+        .chat-send-btn { background: #fa4299; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-left">
+            <a href="main.html" class="nav-logo">
+                <img src="images/Logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/150x50?text=LOGO'">
+            </a>
+        </div>
+
+        <div class="nav-menu">
+            <a href="main.html">หน้าแรก</a>
+            <a href="dashboard.html">บอร์ด</a>
+            <a href="tutor.html">ผู้คน</a>
+            <a href="aboutus.html">เกี่ยวกับ</a>
+            <a href="feed.html">โพสต์</a>    
+            <a href="ebook.html" class="active">E-Book</a>
+        </div>
+
+        <div class="nav-right" id="navRightContent">
+            <a href="login.html" class="btn-login">เข้าสู่ระบบ</a>
+        </div>
+    </nav>
+
+    <template id="loggedInTemplate">
+        <div class="noti-icon-container" id="notiContainer">
+            <i class="fas fa-bell noti-icon" onclick="toggleNotification(event)"></i>
+            <span class="noti-badge" id="notiCount">0</span>
+            
+            <div class="noti-dropdown" id="notiDropdown">
+                <div class="noti-header">
+                    <span>การแจ้งเตือน</span>
+                    <span style="cursor:pointer; font-size:12px; text-decoration:underline;" onclick="markAllRead()">อ่านทั้งหมด</span>
+                </div>
+                <div class="noti-content" id="notiList">
+                    <div class="no-noti">กำลังโหลด...</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="window.location.href='profile.html'">
+            <img id="userAvatar" src="images/default-avatar.png" style="width:40px; height:40px; border-radius:50%; border:2px solid #ff2d78; object-fit:cover;">
+            <span id="userName" style="font-weight:600; color:#333;">Username</span>
+        </div>
+        
+        <a href="#" onclick="logout()" style="color:#888; font-size:18px; margin-left:10px;" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i></a>
+    </template>
+
+    <header class="ebook-hero">
+        <h1>คลังหนังสือออนไลน์</h1>
+        <p>เปิดโลกการเรียนรู้ไร้ขีดจำกัด ค้นหา E-Book ที่ใช่สำหรับคุณ</p>
+    </header>
+    
+    <main class="container">
+        <div class="section-header">
+            <h2 class="section-title">หนังสือมาใหม่ล่าสุด 🔥</h2>
+            <a href="#" class="view-all">ดูทั้งหมด <i class="fas fa-chevron-right"></i></a>
+        </div>
+
+        <div class="book-grid">
+            <div class="book-card">
+                <div class="book-cover-wrapper">
+                    <span class="badge new">NEW</span>
+                    <img src="https://via.placeholder.com/300x450/ffcfdf/fa4299?text=React+Guide" class="book-cover" alt="Book Cover">
+                </div>
+                <div class="book-info">
+                    <div class="book-cat">Programming</div>
+                    <div class="book-title">คู่มือ React ฉบับเริ่มต้นจนถึงมือโปร</div>
+                    <div class="book-author">โดย: DevMaster</div>
+                    <div class="book-footer">
+                        <div class="price"><span class="currency">฿</span>299</div>
+                        <a href="#" class="btn-buy"><i class="fas fa-shopping-cart"></i> ซื้อเลย</a>
+                    </div>
+                </div>
+            </div>
+            <div class="book-card">
+                <div class="book-cover-wrapper">
+                      <span class="badge new">NEW</span>
+                    <img src="https://via.placeholder.com/300x450/c4efff/0077b6?text=UX%2FUI+Design" class="book-cover" alt="Book Cover">
+                </div>
+                <div class="book-info">
+                    <div class="book-cat">Design</div>
+                    <div class="book-title">หลักการออกแบบ UX/UI ที่ทุกคนควรรู้</div>
+                    <div class="book-author">โดย: CreativePixel</div>
+                    <div class="book-footer">
+                        <div class="price"><span class="currency">฿</span>350</div>
+                        <a href="#" class="btn-buy"><i class="fas fa-shopping-cart"></i> ซื้อเลย</a>
+                    </div>
+                </div>
+            </div>
+            <div class="book-card">
+                <div class="book-cover-wrapper">
+                    <img src="https://via.placeholder.com/300x450/e2ceff/6200ea?text=Python+AI" class="book-cover" alt="Book Cover">
+                </div>
+                <div class="book-info">
+                    <div class="book-cat">Data Science</div>
+                    <div class="book-title">สร้าง AI ง่ายๆ ด้วย Python (ฉบับปรับปรุง)</div>
+                    <div class="book-author">โดย: DataWizard</div>
+                    <div class="book-footer">
+                        <div class="price"><span class="currency">฿</span>420</div>
+                        <a href="#" class="btn-buy"><i class="fas fa-shopping-cart"></i> ซื้อเลย</a>
+                    </div>
+                </div>
+            </div>
+             <div class="book-card">
+                <div class="book-cover-wrapper">
+                    <img src="https://via.placeholder.com/300x450/ffe4b3/d97706?text=Marketing+101" class="book-cover" alt="Book Cover">
+                </div>
+                <div class="book-info">
+                    <div class="book-cat">Business</div>
+                    <div class="book-title">การตลาดยุคดิจิทัล 101</div>
+                    <div class="book-author">โดย: GrowthHacker</div>
+                    <div class="book-footer">
+                        <div class="price"><span class="currency">฿</span>250</div>
+                        <a href="#" class="btn-buy"><i class="fas fa-shopping-cart"></i> ซื้อเลย</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header" style="margin-top: 60px;">
+             <h2 class="section-title">หนังสือขายดีประจำสัปดาห์ 🏆</h2>
+             <a href="#" class="view-all">ดูทั้งหมด <i class="fas fa-chevron-right"></i></a>
+        </div>
+
+        <div class="book-grid">
+            <div class="book-card">
+                <div class="book-cover-wrapper">
+                    <span class="badge hot">HOT</span>
+                    <img src="https://via.placeholder.com/300x450/baffc9/00b894?text=Vue.js" class="book-cover" alt="Book Cover">
+                </div>
+                <div class="book-info">
+                    <div class="book-cat">Programming</div>
+                    <div class="book-title">Vue.js 3 The Complete Guide</div>
+                    <div class="book-author">โดย: FrontendNinja</div>
+                    <div class="book-footer">
+                        <div class="price"><span class="currency">฿</span>399</div>
+                        <a href="#" class="btn-buy"><i class="fas fa-shopping-cart"></i> ซื้อเลย</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main> 
+
+    <div class="chat-toggle-btn" onclick="toggleChat()">
+        <i class="fas fa-comment-dots"></i>
+    </div>
+    <div class="chat-box" id="chatBox">
+        <div class="chat-header">
+            <span><i class="fas fa-comments"></i> Community Chat</span>
+            <span class="chat-close" onclick="toggleChat()">×</span>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div style="text-align:center; color:#999; margin-top:20px;">กำลังโหลด...</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" class="chat-input" placeholder="พิมพ์ข้อความ..." onkeypress="handleEnter(event)">
+            <button class="chat-send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000'; // Base API
+
+        // --- 1. จัดการ Login / Notification ---
+        document.addEventListener('DOMContentLoaded', () => {
+            checkLoginStatus();
+            
+            // เริ่มโหลดแจ้งเตือนถ้าล็อกอินอยู่
+            if(localStorage.getItem('currentUser')) {
+                loadNotifications();
+                setInterval(loadNotifications, 5000); 
+            }
+
+            // คลิกที่อื่นเพื่อปิด Dropdown
+            window.addEventListener('click', (e) => {
+                const notiContainer = document.getElementById('notiContainer');
+                if (notiContainer && !notiContainer.contains(e.target)) {
+                    const dropdown = document.getElementById('notiDropdown');
+                    if(dropdown) dropdown.classList.remove('active');
+                }
+            });
+        });
+
+        function checkLoginStatus() {
+            const userJson = localStorage.getItem('currentUser');
+            const navRight = document.getElementById('navRightContent');
+            const template = document.getElementById('loggedInTemplate');
+
+            if (userJson && template) {
+                const user = JSON.parse(userJson);
+                // Clone template มาใช้ เพื่อไม่ให้เขียนทับ HTML
+                const content = template.content.cloneNode(true);
+                navRight.innerHTML = ''; 
+                navRight.appendChild(content);
+
+                const userNameEl = document.getElementById('userName');
+                const userAvatarEl = document.getElementById('userAvatar');
+
+                if(userNameEl) userNameEl.textContent = user.username || user.name;
+                if(userAvatarEl) {
+                    userAvatarEl.src = (user.avatar && user.avatar.length > 10) 
+                        ? user.avatar 
+                        : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                }
+            }
+        }
+
+        function logout() {
+            Swal.fire({
+                title: 'ออกจากระบบ?',
+                icon: 'question', showCancelButton: true, confirmButtonColor: '#fa4299',
+                cancelButtonText: 'ยกเลิก', confirmButtonText: 'ใช่, ออกจากระบบ'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('currentUser');
+                    window.location.reload();
+                }
+            });
+        }
+
+        // --- Notification Logic ---
+        function toggleNotification(event) {
+            if(event) event.stopPropagation();
+            const dropdown = document.getElementById('notiDropdown');
+            if(dropdown) dropdown.classList.toggle('active');
+        }
+
+        async function loadNotifications() {
+            const userJson = localStorage.getItem('currentUser');
+            if (!userJson) return;
+            const user = JSON.parse(userJson);
+            const list = document.getElementById('notiList');
+            const badge = document.getElementById('notiCount');
+
+            try {
+                if(!list) return;
+
+                const res = await fetch(`${API_URL}/api/notifications?userId=${user.id}`);
+                if (!res.ok) throw new Error("Failed to fetch");
+                const notifications = await res.json();
+                
+                if (!Array.isArray(notifications)) return;
+
+                const unreadCount = notifications.filter(n => !n.read).length;
+                if (unreadCount > 0) {
+                    badge.style.display = 'flex';
+                    badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                } else {
+                    badge.style.display = 'none';
+                }
+
+                if (notifications.length === 0) {
+                    list.innerHTML = '<div class="no-noti">ไม่มีการแจ้งเตือน</div>';
+                } else {
+                    list.innerHTML = notifications.map(item => `
+                        <div class="noti-item ${item.read ? '' : 'unread'}">
+                            <img src="${item.senderAvatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="noti-avatar">
+                            <div style="flex:1">
+                                <div class="noti-text">
+                                    <strong>${item.senderName || 'ระบบ'}</strong> ${item.message}
+                                </div>
+                                <span class="noti-time">${item.time || '-'}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error("โหลดแจ้งเตือนไม่สำเร็จ", error);
+            }
+        }
+
+        function markAllRead() {
+            document.getElementById('notiCount').style.display = 'none';
+        }
+
+        // --- Chat Logic ---
+        let isChatOpen = false;
+        let chatInterval = null;
+
+        function toggleChat() {
+            const box = document.getElementById('chatBox');
+            isChatOpen = !isChatOpen;
+            box.style.display = isChatOpen ? 'flex' : 'none';
+            if (isChatOpen) {
+                loadMessages(); 
+                chatInterval = setInterval(loadMessages, 3000); 
+                scrollToBottom();
+            } else {
+                clearInterval(chatInterval); 
+            }
+        }
+
+        async function loadMessages() {
+            try {
+                const res = await fetch(`${API_URL}/api/chat`);
+                if (!res.ok) return; 
+                const messages = await res.json();
+                renderMessages(messages);
+            } catch (err) { console.error("Chat Error:", err); }
+        }
+
+        function renderMessages(messages) {
+            const container = document.getElementById('chatMessages');
+            const userJson = localStorage.getItem("currentUser");
+            const currentUser = userJson ? JSON.parse(userJson) : null;
+            const myName = currentUser ? currentUser.name : "";
+            const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+
+            container.innerHTML = messages.map(msg => {
+                const isMe = msg.sender === myName;
+                return `
+                    <div class="msg-row ${isMe ? 'me' : 'other'}">
+                        ${!isMe ? `<img src="${msg.avatar || 'https://via.placeholder.com/30'}" class="msg-avatar">` : ''}
+                        <div>
+                            <div class="msg-name">${msg.sender}</div>
+                            <div class="msg-bubble">${msg.text}</div>
+                        </div>
+                        ${isMe ? `<img src="${msg.avatar || 'https://via.placeholder.com/30'}" class="msg-avatar">` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            if (isAtBottom) scrollToBottom();
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            const userJson = localStorage.getItem("currentUser");
+            
+            if (!userJson) {
+                Swal.fire('เข้าสู่ระบบก่อน', 'กรุณาเข้าสู่ระบบเพื่อใช้งานแชท', 'warning');
+                return;
+            }
+            if (!text) return;
+            const user = JSON.parse(userJson);
+
+            try {
+                await fetch(`${API_URL}/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sender: user.name,
+                        avatar: user.avatar,
+                        text: text
+                    })
+                });
+                input.value = ''; 
+                loadMessages(); 
+            } catch (e) { console.log("ส่งข้อความไม่ได้"); }
+        }
+
+        function handleEnter(e) { if (e.key === 'Enter') sendMessage(); }
+        function scrollToBottom() {
+            const container = document.getElementById('chatMessages');
+            container.scrollTop = container.scrollHeight;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+[
+  {
+    "followerId": "1768569684882",
+    "followingId": "1768581568321",
+    "timestamp": "2026-01-17T09:49:37.544Z"
+  },
+  {
+    "followerId": "1768653582179",
+    "followingId": "1768569626511",
+    "timestamp": "2026-01-17T12:42:34.716Z"
+  },
+  {
+    "followerId": "1768653582179",
+    "followingId": "1768569684882",
+    "timestamp": "2026-01-17T12:44:55.427Z"
+  },
+  {
+    "followerId": "1768569684882",
+    "followingId": "1768569626511",
+    "timestamp": "2026-01-17T12:51:12.278Z"
+  },
+  {
+    "followerId": "1768569684882",
+    "followingId": "1768653582179",
+    "timestamp": "2026-01-17T12:51:13.630Z"
+  },
+  {
+    "followerId": "1768569684882",
+    "followingId": "1768649075430",
+    "timestamp": "2026-01-17T12:51:15.879Z"
+  },
+  {
+    "followerId": "1768649075430",
+    "followingId": "1768569684882",
+    "timestamp": "2026-01-17T12:51:26.771Z"
+  },
+  {
+    "followerId": "1768649075430",
+    "followingId": "1768569626511",
+    "timestamp": "2026-01-17T12:51:27.351Z"
+  },
+  {
+    "followerId": "1768649075430",
+    "followingId": "1768581568321",
+    "timestamp": "2026-01-17T12:51:28.174Z"
+  },
+  {
+    "followerId": "1768649075430",
+    "followingId": "1768653582179",
+    "timestamp": "2026-01-17T12:51:28.986Z"
+  },
+  {
+    "followerId": "1768581568321",
+    "followingId": "1768569626511",
+    "timestamp": "2026-01-17T12:51:58.204Z"
+  },
+  {
+    "followerId": "1768581568321",
+    "followingId": "1768569684882",
+    "timestamp": "2026-01-17T12:51:59.277Z"
+  },
+  {
+    "followerId": "1768581568321",
+    "followingId": "1768649075430",
+    "timestamp": "2026-01-17T12:52:00.451Z"
+  },
+  {
+    "followerId": "1768581568321",
+    "followingId": "1768653582179",
+    "timestamp": "2026-01-17T12:52:01.380Z"
+  },
+  {
+    "followerId": "1768653582179",
+    "followingId": "1768581568321",
+    "timestamp": "2026-01-17T12:52:14.593Z"
+  },
+  {
+    "followerId": "1768653582179",
+    "followingId": "1768649075430",
+    "timestamp": "2026-01-17T12:52:15.439Z"
+  },
+  {
+    "followerId": "1768658212928",
+    "followingId": "1768649075430",
+    "timestamp": "2026-01-17T13:58:14.914Z"
+  },
+  {
+    "followerId": "1768649075430",
+    "followingId": "1768658212928",
+    "timestamp": "2026-01-17T13:59:47.775Z"
+  }
+]

@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Study Group</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        /* --- Reset & Global --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
+        
+        body { 
+            background-color: #f8f9fa; 
+            color: #333; 
+            overflow-y: scroll;
+        }
+
+        :root {
+            --primary-pink: #fa4299; 
+            --hover-pink: #ff2d78;
+        }
+
+        /* --- Navbar CSS --- */
+        nav {
+            height: 80px; background: #fff; display: flex; justify-content: space-between; align-items: center;
+            padding: 0 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            position: sticky; top: 0; z-index: 1000; font-family: 'Kanit', sans-serif;
+        }
+
+        .nav-left { display: flex; align-items: center; gap: 15px; }
+        .nav-logo img { height: 45px; display: block; }
+        .nav-brand { font-size: 20px; font-weight: 700; color: #ff2d78; }
+        
+        /* เมนูตรงกลาง */
+        .nav-menu { 
+            position: absolute; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            display: flex; 
+            gap: 40px; 
+        }
+        .nav-menu a { 
+            text-decoration: none; color: #555; font-size: 16px; font-weight: 500; 
+            padding: 8px 12px; transition: all 0.3s ease;
+        }
+        .nav-menu a:hover { 
+            color: #ff2d78; background: #fff0f5; border-radius: 8px;
+        }
+        
+        .nav-right { display: flex; align-items: center; gap: 15px; position: relative; }
+        
+        /* ปุ่มต่างๆ */
+        .btn-login {
+            border: 2px solid #333; color: #333 !important; padding: 8px 20px; 
+            border-radius: 30px; font-weight: 600; text-decoration: none; transition: 0.3s;
+        }
+        .btn-login:hover { background: #333; color: white !important; }
+
+        @media (max-width: 1000px) {
+            .nav-menu { display: none; }
+            .nav-brand { display: none; }
+        }
+
+        /* --- Dashboard Body --- */
+        .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        
+        .btn-create {
+            background: var(--primary-pink); color: white; padding: 12px 25px;
+            border-radius: 30px; border: none; cursor: pointer; font-size: 16px; font-weight: 500;
+            box-shadow: 0 4px 15px rgba(250, 66, 153, 0.3); transition: 0.2s; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-create:hover { background: var(--hover-pink); transform: translateY(-2px); }
+
+        /* Post List Style */
+        .post-list { display: flex; flex-direction: column; gap: 15px; }
+        .post-item {
+            background: white; padding: 25px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid #eee;
+            cursor: pointer; transition: 0.2s;
+        }
+        .post-item:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); border-color: var(--primary-pink); }
+
+        .col-main { flex: 2; padding-right: 20px; }
+        
+        .post-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .post-title { font-size: 18px; font-weight: 600; color: #222; }
+        .delete-btn { background: none; border: none; color: #ff4d4f; cursor: pointer; font-size: 16px; transition: 0.2s; padding: 5px; }
+        .delete-btn:hover { transform: scale(1.2); }
+
+        .post-tag { font-size: 13px; color: var(--primary-pink); background: #fff0f5; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-right: 10px; }
+        .post-desc-preview { font-size: 14px; color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 350px; display: inline-block; vertical-align: middle;}
+
+        .col-tutor { flex: 0.8; display: flex; align-items: center; gap: 10px; color: #555; font-size: 15px; border-left: 1px solid #eee; padding-left: 20px; }
+        .avatar-sm { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; }
+        
+        .col-time { flex: 1.2; text-align: right; }
+        .time-box { background: #f0f2f5; padding: 8px 15px; border-radius: 8px; display: inline-block; text-align: right; min-width: 160px; }
+        .date-text { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 2px; }
+        .time-text { font-size: 13px; color: #666; }
+        .mode-text { font-size: 12px; color: var(--primary-pink); margin-top: 4px; font-weight: 500; }
+
+        .empty-state { text-align: center; padding: 50px; color: #999; font-size: 18px; background: white; border-radius: 12px; }
+
+        /* --- MODAL (POPUP) --- */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center;
+        }
+        .modal-box {
+            background: white; width: 550px; padding: 30px; border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; animation: slideDown 0.3s ease;
+            max-height: 90vh; overflow-y: auto; 
+        }
+        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .close-btn { position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer; color: #aaa; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; margin-bottom: 5px; font-weight: 500; color: #444; }
+        .form-input, .form-select, .form-textarea { 
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; font-family: 'Kanit', sans-serif;
+        }
+        .form-textarea { resize: vertical; min-height: 100px; }
+        .form-row { display: flex; gap: 15px; }
+
+        .btn-submit-post {
+            background: var(--primary-pink); color: white; border: none; padding: 12px; width: 100%;
+            border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 15px; transition: 0.2s;
+        }
+        .btn-submit-post:hover { background: var(--hover-pink); }
+
+        /* --- Badge สถานะ --- */
+        .badge-registered {
+            background-color: #28a745; color: white; font-size: 12px; padding: 4px 10px;
+            border-radius: 20px; margin-left: 10px; display: inline-flex; align-items: center; gap: 5px;
+        }
+        .post-item.registered {
+            border-left: 5px solid #28a745; background-color: #f6fff8;
+        }
+
+        /* --- Notification Styles --- */
+        .noti-icon-container { position: relative; cursor: pointer; margin-right: 15px; }
+        .noti-icon { font-size: 24px; color: #555; transition: 0.3s; }
+        .noti-icon:hover { color: #ff2d78; transform: rotate(15deg); }
+        .noti-badge {
+            position: absolute; top: -5px; right: -5px;
+            background: #ff2d78; color: white; font-size: 10px; font-weight: bold;
+            min-width: 18px; height: 18px; border-radius: 50%;
+            display: none; justify-content: center; align-items: center; border: 2px solid white;
+        }
+        .noti-dropdown {
+            position: absolute; top: 45px; right: -10px; width: 320px;
+            background: white; border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15); z-index: 2000;
+            overflow: hidden; display: none; border: 1px solid #eee;
+        }
+        .noti-dropdown.active { display: block; animation: fadeInDrop 0.2s ease; }
+        @keyframes fadeInDrop { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .noti-header {
+            background: #ff2d78; color: white; padding: 12px 15px;
+            font-weight: 600; font-size: 14px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .noti-content { max-height: 300px; overflow-y: auto; }
+        .noti-item {
+            padding: 12px 15px; border-bottom: 1px solid #f0f0f0;
+            display: flex; gap: 10px; align-items: start; transition: 0.2s; cursor: pointer;
+        }
+        .noti-item:hover { background: #fff0f5; }
+        .noti-item.unread { background: #fdfdfd; border-left: 4px solid #ff2d78; }
+        .noti-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .noti-text { font-size: 13px; color: #333; }
+        .noti-text strong { color: #ff2d78; }
+        .noti-time { font-size: 11px; color: #999; margin-top: 4px; display: block; }
+        .no-noti { padding: 20px; text-align: center; color: #aaa; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-left">
+            <a href="main.html" class="nav-logo">
+                <img src="images/Logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/150x50?text=LOGO'">
+            </a>
+        </div>
+
+        <div class="nav-menu">
+            <a href="main.html">หน้าแรก</a>
+            <a href="dashboard.html">บอร์ด</a>
+            <a href="tutor.html">ผู้คน</a>
+            <a href="aboutus.html">เกี่ยวกับ</a>
+            <a href="feed.html">โพสต์</a>      
+            <a href="ebook.html">E-Book</a>
+        </div>
+
+        <div class="nav-right" id="navRightContent">
+            <a href="login.html" class="btn-login">เข้าสู่ระบบ</a>
+        </div>
+    </nav>
+
+    <template id="loggedInTemplate">
+        <div class="noti-icon-container" id="notiContainer">
+            <i class="fas fa-bell noti-icon" onclick="toggleNotification(event)"></i>
+            <span class="noti-badge" id="notiCount">0</span>
+            
+            <div class="noti-dropdown" id="notiDropdown">
+                <div class="noti-header">
+                    <span>การแจ้งเตือน</span>
+                    <span style="cursor:pointer; font-size:12px; text-decoration:underline;" onclick="markAllRead()">อ่านทั้งหมด</span>
+                </div>
+                <div class="noti-content" id="notiList">
+                    <div class="no-noti">กำลังโหลด...</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="window.location.href='profile.html'">
+            <img id="userAvatar" src="images/default-avatar.png" style="width:40px; height:40px; border-radius:50%; border:2px solid #ff2d78; object-fit:cover;">
+            <span id="userName" style="font-weight:600; color:#333;">Username</span>
+        </div>
+        
+        <a href="#" onclick="logout()" style="color:#888; font-size:18px; margin-left:10px;" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i></a>
+    </template>
+
+    <div class="container">
+        <div class="header-flex">
+            <h2><i class="fas fa-book-open" style="color:var(--primary-pink); margin-right:10px;"></i> บอร์ดหาคนสอน / หาคนเรียน</h2>
+            <button class="btn-create" onclick="openModal()"><i class="fas fa-plus"></i> ลงประกาศใหม่</button>
+        </div>
+        <div id="postList" class="post-list">
+        </div>
+    </div>
+
+    <div id="createModal" class="modal-overlay">
+        <div class="modal-box">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 style="text-align:center; margin-bottom:20px; color:#333;">ลงประกาศใหม่</h2>
+            
+            <form onsubmit="handleCreatePost(event)">
+                <div class="form-group">
+                    <label class="form-label">หัวข้อเรื่อง</label>
+                    <input type="text" id="p-topic" class="form-input" placeholder="เช่น หาคนติวแคลคูลัส ด่วน!" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">หมวดหมู่</label>
+                    <select id="p-category" class="form-select">
+                        <option>คณิตศาสตร์</option>
+                        <option>วิทยาศาสตร์</option>
+                        <option>ภาษาต่างประเทศ</option>
+                        <option>คอมพิวเตอร์</option>
+                        <option>ดนตรี/ศิลปะ</option>
+                        <option>อื่นๆ</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">รายละเอียด</label>
+                    <textarea id="p-detail" class="form-textarea" placeholder="ระบุเนื้อหาที่อยากเรียน หรือรายละเอียดเพิ่มเติม..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">ลิงก์ห้องเรียน (Google Meet / Zoom)</label>
+                    <input type="url" id="p-link" class="form-input" placeholder="https://meet.google.com/..." >
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group" style="flex:1;">
+                        <label class="form-label">วันที่สอน</label>
+                        <input type="date" id="p-date" class="form-input" required>
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label class="form-label">เวลาในการสอน</label>
+                        <input type="text" id="p-time" class="form-input" placeholder="เช่น 10:00 - 12:00 น." required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">รูปแบบการเรียน</label>
+                    <input type="text" id="p-mode" class="form-input" value="Online" placeholder="เช่น Online ผ่าน Zoom / Discord" required>
+                </div>
+
+                <button type="submit" class="btn-submit-post">ลงประกาศทันที</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const BASE_API = 'http://localhost:3000'; 
+
+        const modal = document.getElementById('createModal');
+        function openModal() { modal.style.display = "flex"; }
+        function closeModal() { modal.style.display = "none"; }
+        window.onclick = function(event) { if (event.target == modal) closeModal(); }
+
+        // --- 1. ฟังก์ชันโหลดโพสต์จาก Server ---
+        async function renderPosts() {
+            try {
+                const container = document.getElementById('postList');
+                if (!container) return;
+
+                const userJson = localStorage.getItem("currentUser");
+                const currentUser = userJson ? JSON.parse(userJson) : null;
+
+                const resPosts = await fetch(`${BASE_API}/api/study-posts`);
+                const posts = await resPosts.json();
+
+                let myRegistrations = [];
+                if (currentUser) {
+                    try {
+                        const resRegis = await fetch(`${BASE_API}/api/registrations?studentId=${currentUser.id}`);
+                        if (resRegis.ok) myRegistrations = await resRegis.json();
+                    } catch (e) { console.log("Skip registrations load"); }
+                }
+                
+                const registeredPostIds = new Set(myRegistrations.map(r => String(r.postId || r.study_post_id)));
+
+                if (!Array.isArray(posts) || posts.length === 0) {
+                    container.innerHTML = '<div class="empty-state">ยังไม่มีประกาศในขณะนี้</div>';
+                    return;
+                }
+
+                const html = posts.map((post) => {
+                    let isOwner = false;
+                    if (currentUser) {
+                        isOwner = String(post.ownerId) === String(currentUser.id) || 
+                                  String(post.ownerId) === String(currentUser.userId);
+                    }
+
+                    const isRegistered = registeredPostIds.has(String(post.id));
+                    const registeredBadge = isRegistered 
+                        ? `<span class="badge-registered"><i class="fas fa-check-circle"></i> ลงทะเบียนแล้ว</span>` : '';
+                    const itemClass = isRegistered ? 'post-item registered' : 'post-item';
+
+                    const deleteBtn = isOwner ? 
+                        `<button onclick="deletePost(event, '${post.id}')" class="delete-btn" title="ลบโพสต์"><i class="fas fa-trash-alt"></i></button>` : '';
+
+                    const imgSource = post.owner_avatar || post.avatar; 
+                    const userAvatar = (imgSource && imgSource.length > 10) ? imgSource : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
+                    return `
+                    <div class="${itemClass}" onclick="viewPost('${post.id}')">
+                        <div class="col-main">
+                            <div class="post-title-row">
+                                <div style="display:flex; align-items:center;">
+                                    <div class="post-title">${post.title || 'ไม่ระบุหัวข้อ'}</div>
+                                    ${registeredBadge} 
+                                </div>
+                                ${deleteBtn}
+                            </div>
+                            <div>
+                                <span class="post-tag">${post.category || 'ทั่วไป'}</span>
+                                <span class="post-desc-preview">${post.detail || ''}</span>
+                            </div>
+                        </div>
+                        <div class="col-tutor">
+                            <img src="${userAvatar}" class="avatar-sm">
+                            ${post.name || 'ไม่ระบุชื่อ'}
+                        </div>
+                        <div class="col-time">
+                            <div class="time-box">
+                                <div class="date-text"><i class="far fa-calendar-alt"></i> ${formatDate(post.date)}</div>
+                                <div class="time-text"><i class="far fa-clock"></i> ${post.time || '-'}</div>
+                                <div class="mode-text">${post.mode || 'Online'}</div>
+                            </div>
+                        </div>
+                    </div>
+                `}).join('');
+                container.innerHTML = html;
+            } catch (err) {
+                console.error("Error loading posts:", err);
+                document.getElementById('postList').innerHTML = '<div class="empty-state" style="color:red;">เชื่อมต่อ Server ไม่ได้</div>';
+            }
+        }
+
+        function formatDate(dateString) {
+            if(!dateString) return "-";
+            const date = new Date(dateString);
+            if(isNaN(date.getTime())) return dateString;
+            return date.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
+        }
+
+        async function deletePost(event, id) {
+            event.stopPropagation();
+            const confirmResult = await Swal.fire({
+                title: 'ยืนยันการลบ?',
+                text: "โพสต์นี้จะหายไปถาวรเลยนะ",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ff4d4f',
+                cancelButtonColor: '#ccc',
+                confirmButtonText: 'ลบเลย'
+            });
+
+            if (confirmResult.isConfirmed) {
+                try {
+                    const res = await fetch(`${BASE_API}/api/study-posts/${id}`, { method: 'DELETE' });
+                    if (res.ok) {
+                        Swal.fire('เรียบร้อย', 'ลบโพสต์แล้ว', 'success');
+                        renderPosts();
+                    } else {
+                        Swal.fire('Error', 'ลบไม่สำเร็จ', 'error');
+                    }
+                } catch (err) {
+                    Swal.fire('Error', 'เชื่อมต่อ Server ไม่ได้', 'error');
+                }
+            }
+        }
+
+        async function handleCreatePost(e) {
+            e.preventDefault();
+            const userJson = localStorage.getItem('currentUser');
+            if(!userJson) return Swal.fire('เตือน', 'กรุณาล็อกอินก่อนลงประกาศ', 'warning');
+            const currentUser = JSON.parse(userJson);
+
+            const newPost = {
+                title: document.getElementById('p-topic').value,
+                category: document.getElementById('p-category').value,
+                detail: document.getElementById('p-detail').value,
+                date: document.getElementById('p-date').value,
+                time: document.getElementById('p-time').value,
+                mode: document.getElementById('p-mode').value,
+                link: document.getElementById('p-link').value,
+                ownerId: currentUser.id,
+                name: currentUser.name,
+                avatar: currentUser.avatar || "" 
+            };
+
+            try {
+                const res = await fetch(`${BASE_API}/api/study-posts`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newPost)
+                });
+                if (res.ok) {
+                    closeModal();
+                    Swal.fire({ icon: 'success', title: 'ลงประกาศสำเร็จ!', showConfirmButton: false, timer: 1500 });
+                    e.target.reset();
+                    setTimeout(() => renderPosts(), 1500); 
+                } else {
+                    Swal.fire('Error', 'บันทึกข้อมูลไม่สำเร็จ', 'error');
+                }
+            } catch (err) {
+                Swal.fire('Error', 'เชื่อมต่อ Server ไม่ได้', 'error');
+            }
+        }
+
+        function viewPost(id) {
+            window.location.href = `post-detail.html?id=${id}`;
+        }
+
+        // --- 4. จัดการ Login / Notification ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkLoginStatus();
+            renderPosts();
+            
+            // เริ่มโหลดแจ้งเตือนถ้าล็อกอินอยู่
+            if(localStorage.getItem('currentUser')) {
+                loadNotifications();
+                setInterval(loadNotifications, 5000); 
+            }
+
+            // คลิกที่อื่นเพื่อปิด Dropdown
+            window.addEventListener('click', (e) => {
+                const notiContainer = document.getElementById('notiContainer');
+                if (notiContainer && !notiContainer.contains(e.target)) {
+                    const dropdown = document.getElementById('notiDropdown');
+                    if(dropdown) dropdown.classList.remove('active');
+                }
+            });
+        });
+
+        function checkLoginStatus() {
+            const userJson = localStorage.getItem('currentUser');
+            const navRight = document.getElementById('navRightContent');
+            const template = document.getElementById('loggedInTemplate');
+
+            if (userJson && template) {
+                const user = JSON.parse(userJson);
+                const content = template.content.cloneNode(true);
+                navRight.innerHTML = ''; 
+                navRight.appendChild(content);
+
+                const userNameEl = document.getElementById('userName');
+                const userAvatarEl = document.getElementById('userAvatar');
+
+                if(userNameEl) userNameEl.textContent = user.username || user.name;
+                if(userAvatarEl) {
+                    userAvatarEl.src = (user.avatar && user.avatar.length > 10) 
+                        ? user.avatar 
+                        : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                }
+            }
+        }
+
+        function logout() {
+            Swal.fire({
+                title: 'ออกจากระบบ?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#fa4299',
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonText: 'ใช่, ออกจากระบบ'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('currentUser');
+                    window.location.reload();
+                }
+            });
+        }
+
+        // --- Notification Logic ---
+
+        function toggleNotification(event) {
+            if(event) event.stopPropagation();
+            const dropdown = document.getElementById('notiDropdown');
+            if(dropdown) dropdown.classList.toggle('active');
+        }
+
+        async function loadNotifications() {
+            const userJson = localStorage.getItem('currentUser');
+            if (!userJson) return;
+            const user = JSON.parse(userJson);
+            const list = document.getElementById('notiList');
+            const badge = document.getElementById('notiCount');
+
+            try {
+                if(!list) return;
+
+                const res = await fetch(`${BASE_API}/api/notifications?userId=${user.id}`);
+                const notifications = await res.json();
+                
+                if (!Array.isArray(notifications)) return;
+
+                const unreadCount = notifications.filter(n => !n.read).length;
+
+                if (unreadCount > 0) {
+                    badge.style.display = 'flex';
+                    badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                } else {
+                    badge.style.display = 'none';
+                }
+
+                if (notifications.length === 0) {
+                    list.innerHTML = '<div class="no-noti">ไม่มีการแจ้งเตือน</div>';
+                } else {
+                    list.innerHTML = notifications.map(item => `
+                        <div class="noti-item ${item.read ? '' : 'unread'}">
+                            <img src="${item.senderAvatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="noti-avatar">
+                            <div style="flex:1">
+                                <div class="noti-text">
+                                    <strong>${item.senderName || 'ระบบ'}</strong> ${item.message}
+                                </div>
+                                <span class="noti-time">${item.time || '-'}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error("โหลดแจ้งเตือนไม่สำเร็จ", error);
+            }
+        }
+
+        // ✅ ฟังก์ชัน: กดแล้วจำค่าว่าอ่านแล้ว (ไม่ต้องรอรีเฟรช)
+        async function markAllRead() {
+            // 1. ซ่อนตัวเลขแดงๆ ทันที
+            const badge = document.getElementById('notiCount');
+            if (badge) badge.style.display = 'none';
+
+            // 2. เปลี่ยนสีรายการให้เป็นสีขาว (เหมือนอ่านแล้ว)
+            const unreadItems = document.querySelectorAll('.noti-item.unread');
+            unreadItems.forEach(item => {
+                item.classList.remove('unread');
+                item.style.backgroundColor = 'white'; // บังคับเปลี่ยนสี
+                item.style.borderLeft = 'none';
+            });
+
+            // 3. ส่งบอก Server ให้บันทึก
+            const userJson = localStorage.getItem('currentUser');
+            if (!userJson) return;
+            const user = JSON.parse(userJson);
+
+            try {
+                await fetch(`${BASE_API}/api/notifications/mark-read`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: user.id })
+                });
+                console.log("บันทึกสถานะอ่านแล้วสำเร็จ");
+            } catch (err) {
+                console.error("เชื่อมต่อ Server ไม่ได้", err);
+            }
+        }
+
+    </script>
+</body>
+</html>
