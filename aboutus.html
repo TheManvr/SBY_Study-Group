@@ -1,482 +1,987 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>About Us - Study Group</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     <style>
-        /* --- Reset & Global --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kanit', sans-serif; }
-        
-        body { 
-            background-color: #f8f9fa; 
-            color: #333; 
-            overflow-y: scroll;
-        }
+      /* --- Reset & Global --- */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Kanit", sans-serif;
+      }
 
-        :root {
-            --primary-pink: #fa4299; 
-            --hover-pink: #ff2d78;
-        }
+      body {
+        background-color: #f8f9fa;
+        color: #333;
+        overflow-y: scroll;
+      }
 
-        /* --- Navbar CSS --- */
-        nav {
-            height: 80px; background: #fff; display: flex; justify-content: space-between; align-items: center;
-            padding: 0 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
-            position: sticky; top: 0; z-index: 1000;
-        }
+      :root {
+        --primary-pink: #fa4299;
+        --hover-pink: #ff2d78;
+      }
 
-        .nav-left { display: flex; align-items: center; gap: 15px; }
-        .nav-logo img { height: 45px; display: block; }
-        
-        .nav-menu { 
-            position: absolute; left: 50%; transform: translateX(-50%); 
-            display: flex; gap: 40px; 
-        }
-        .nav-menu a { 
-            text-decoration: none; color: #555; font-size: 16px; font-weight: 500; 
-            padding: 8px 12px; transition: all 0.3s ease;
-        }
-        .nav-menu a:hover, .nav-menu a.active { 
-            color: #ff2d78; background: #fff0f5; border-radius: 8px;
-        }
-        
-        .nav-right { display: flex; align-items: center; gap: 15px; position: relative; }
-        
-        .btn-login {
-            border: 2px solid #333; color: #333 !important; padding: 8px 20px; 
-            border-radius: 30px; font-weight: 600; text-decoration: none; transition: 0.3s;
-        }
-        .btn-login:hover { background: #333; color: white !important; }
+      /* --- Navbar CSS --- */
+      nav {
+        height: 80px;
+        background: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 40px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
 
-        @media (max-width: 1000px) {
-            .nav-menu { display: none; }
-        }
+      .nav-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .nav-logo img {
+        height: 45px;
+        display: block;
+      }
 
-        /* --- Notification Styles --- */
-        .noti-icon-container { position: relative; cursor: pointer; margin-right: 15px; }
-        .noti-icon { font-size: 24px; color: #555; transition: 0.3s; }
-        .noti-icon:hover { color: #ff2d78; transform: rotate(15deg); }
-        .noti-badge {
-            position: absolute; top: -5px; right: -5px;
-            background: #ff2d78; color: white; font-size: 10px; font-weight: bold;
-            min-width: 18px; height: 18px; border-radius: 50%;
-            display: none; justify-content: center; align-items: center; border: 2px solid white;
-        }
-        .noti-dropdown {
-            position: absolute; top: 45px; right: -10px; width: 320px;
-            background: white; border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15); z-index: 2000;
-            overflow: hidden; display: none; border: 1px solid #eee;
-        }
-        .noti-dropdown.active { display: block; animation: fadeInDrop 0.2s ease; }
-        @keyframes fadeInDrop { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .noti-header {
-            background: #ff2d78; color: white; padding: 12px 15px;
-            font-weight: 600; font-size: 14px; display: flex; justify-content: space-between; align-items: center;
-        }
-        .noti-content { max-height: 300px; overflow-y: auto; }
-        .noti-item {
-            padding: 12px 15px; border-bottom: 1px solid #f0f0f0;
-            display: flex; gap: 10px; align-items: start; transition: 0.2s; cursor: pointer;
-        }
-        .noti-item:hover { background: #fff0f5; }
-        .noti-item.unread { background: #fdfdfd; border-left: 4px solid #ff2d78; }
-        .noti-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        .noti-text { font-size: 13px; color: #333; }
-        .noti-text strong { color: #ff2d78; }
-        .noti-time { font-size: 11px; color: #999; margin-top: 4px; display: block; }
-        .no-noti { padding: 20px; text-align: center; color: #aaa; font-size: 13px; }
+      .nav-menu {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 40px;
+      }
+      .nav-menu a {
+        text-decoration: none;
+        color: #555;
+        font-size: 16px;
+        font-weight: 500;
+        padding: 8px 12px;
+        transition: all 0.3s ease;
+      }
+      .nav-menu a:hover,
+      .nav-menu a.active {
+        color: #ff2d78;
+        background: #fff0f5;
+        border-radius: 8px;
+      }
 
-        /* --- About Us Specific Styles --- */
-        .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
-        
-        .about-header { text-align: center; margin-bottom: 50px; }
-        .about-title { font-size: 36px; font-weight: 700; color: #333; margin-bottom: 10px; }
-        .about-subtitle { font-size: 18px; color: #777; max-width: 600px; margin: 0 auto; }
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        position: relative;
+      }
 
-        .content-box {
-            background: white; border-radius: 15px; padding: 40px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 30px;
+      .btn-login {
+        border: 2px solid #333;
+        color: #333 !important;
+        padding: 8px 20px;
+        border-radius: 30px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.3s;
+      }
+      .btn-login:hover {
+        background: #333;
+        color: white !important;
+      }
+
+      @media (max-width: 1000px) {
+        .nav-menu {
+          display: none;
         }
+      }
 
-        .section-title {
-            font-size: 24px; font-weight: 600; color: var(--primary-pink);
-            margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px;
+      /* --- Notification Styles --- */
+      .noti-icon-container {
+        position: relative;
+        cursor: pointer;
+        margin-right: 15px;
+      }
+      .noti-icon {
+        font-size: 24px;
+        color: #555;
+        transition: 0.3s;
+      }
+      .noti-icon:hover {
+        color: #ff2d78;
+        transform: rotate(15deg);
+      }
+      .noti-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #ff2d78;
+        color: white;
+        font-size: 10px;
+        font-weight: bold;
+        min-width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        border: 2px solid white;
+      }
+      .noti-dropdown {
+        position: absolute;
+        top: 45px;
+        right: -10px;
+        width: 320px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        z-index: 2000;
+        overflow: hidden;
+        display: none;
+        border: 1px solid #eee;
+      }
+      .noti-dropdown.active {
+        display: block;
+        animation: fadeInDrop 0.2s ease;
+      }
+      @keyframes fadeInDrop {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
         }
-
-        .text-content { font-size: 16px; color: #555; line-height: 1.8; text-align: center; max-width: 800px; margin: 0 auto; }
-
-        /* Team Grid */
-        .team-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 30px; margin-top: 30px;
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
-        
-        .team-card {
-            background: #fff; border: 1px solid #eee; border-radius: 12px;
-            padding: 30px 20px; text-align: center; transition: 0.3s;
-            position: relative; overflow: hidden;
-        }
-        .team-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(250, 66, 153, 0.15);
-            border-color: var(--primary-pink);
-        }
-        
-        .team-img {
-            width: 100px; height: 100px; border-radius: 50%; object-fit: cover;
-            margin-bottom: 15px; border: 3px solid #ffe6f0;
-        }
-        .team-name { font-size: 18px; font-weight: 600; color: #333; margin-bottom: 5px; }
-        .team-role { font-size: 14px; color: var(--primary-pink); font-weight: 500; }
-        
-        /* ✅ เพิ่ม CSS ปุ่มแชทในการ์ด */
-        .btn-team-chat {
-            margin-top: 10px;
-            padding: 6px 15px;
-            border: 1px solid #fa4299;
-            background: white;
-            color: #fa4299;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: 0.3s;
-        }
-        .btn-team-chat:hover {
-            background: #fa4299;
-            color: white;
-        }
+      }
+      .noti-header {
+        background: #ff2d78;
+        color: white;
+        padding: 12px 15px;
+        font-weight: 600;
+        font-size: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .noti-content {
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      .noti-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        gap: 10px;
+        align-items: start;
+        transition: 0.2s;
+        cursor: pointer;
+      }
+      .noti-item:hover {
+        background: #fff0f5;
+      }
+      .noti-item.unread {
+        background: #fdfdfd;
+        border-left: 4px solid #ff2d78;
+      }
+      .noti-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .noti-text {
+        font-size: 13px;
+        color: #333;
+      }
+      .noti-text strong {
+        color: #ff2d78;
+      }
+      .noti-time {
+        font-size: 11px;
+        color: #999;
+        margin-top: 4px;
+        display: block;
+      }
+      .no-noti {
+        padding: 20px;
+        text-align: center;
+        color: #aaa;
+        font-size: 13px;
+      }
 
-        /* Advisor Card */
-        .advisor-section { display: flex; justify-content: center; margin-top: 20px; }
-        .advisor-card {
-            max-width: 350px; width: 100%;
-            background: linear-gradient(135deg, #fff 0%, #fffbfd 100%);
-            border: 2px solid #ffd700; 
-        }
-        .advisor-card .team-role { background: #fff9c4; color: #fbc02d; padding: 4px 12px; border-radius: 20px; }
+      /* --- About Us Specific Styles --- */
+      .container {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 0 20px;
+      }
 
-        /* Contact Box */
-        .contact-container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 20px; }
-        .contact-pill {
-            display: flex; align-items: center; gap: 10px; 
-            background: #f8f9fa; padding: 10px 20px; border-radius: 30px;
-            font-size: 15px; color: #555; transition: 0.2s;
-        }
-        .contact-pill:hover { background: var(--primary-pink); color: white; transform: scale(1.05); }
-        .contact-pill i { font-size: 18px; }
+      .about-header {
+        text-align: center;
+        margin-bottom: 50px;
+      }
+      .about-title {
+        font-size: 36px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 10px;
+      }
+      .about-subtitle {
+        font-size: 18px;
+        color: #777;
+        max-width: 600px;
+        margin: 0 auto;
+      }
 
-        /* --- CHAT CSS --- */
-        .chat-toggle-btn { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #fa4299; color: white; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; z-index: 9999; transition: transform 0.3s; }
-        .chat-toggle-btn:hover { transform: scale(1.1); }
-        
-        .chat-box { position: fixed; bottom: 90px; right: 20px; width: 340px; height: 500px; background: white; border-radius: 16px; box-shadow: 0 5px 30px rgba(0,0,0,0.15); display: none; flex-direction: column; overflow: hidden; z-index: 9999; border: 1px solid #eee; }
-        
-        /* Chat Header */
-        .chat-header { background: #fa4299; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; height: 60px; }
-        .chat-header-user { display: flex; align-items: center; gap: 10px; }
-        .chat-header-avatar { width: 32px; height: 32px; border-radius: 50%; background: white; border: 2px solid white; }
-        .chat-back-btn { cursor: pointer; font-size: 18px; margin-right: 10px; display: none; } 
-        .chat-close { cursor: pointer; font-size: 20px; opacity: 0.8; }
-        .chat-close:hover { opacity: 1; }
+      .content-box {
+        background: white;
+        border-radius: 15px;
+        padding: 40px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        margin-bottom: 30px;
+      }
 
-        /* Views */
-        .view-section { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        
-        /* Inbox View */
-        .inbox-list { flex: 1; overflow-y: auto; }
-        .inbox-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f5f5f5; cursor: pointer; transition: 0.2s; }
-        .inbox-item:hover { background: #fff0f5; }
-        .inbox-avatar { width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; object-fit: cover; border: 1px solid #eee; }
-        .inbox-info { flex: 1; min-width: 0; }
-        .inbox-name { font-weight: 600; font-size: 14px; color: #333; margin-bottom: 3px; }
-        .inbox-last-msg { font-size: 12px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .section-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--primary-pink);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
 
-        /* Messages View */
-        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; display: flex; flex-direction: column; gap: 8px; }
-        
-        .msg-row { display: flex; align-items: flex-end; gap: 8px; }
-        .msg-row.me { flex-direction: row-reverse; }
-        .msg-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
-        .msg-bubble { max-width: 75%; padding: 8px 14px; border-radius: 18px; font-size: 14px; word-wrap: break-word; position: relative; }
-        .msg-row.other .msg-bubble { background: #e4e6eb; color: #333; border-bottom-left-radius: 4px; }
-        .msg-row.me .msg-bubble { background: #fa4299; color: white; border-bottom-right-radius: 4px; }
-        .msg-time { font-size: 10px; color: #aaa; margin-top: 2px; }
-        .msg-row.me .msg-time { text-align: right; }
+      .text-content {
+        font-size: 16px;
+        color: #555;
+        line-height: 1.8;
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto;
+      }
 
-        .chat-input-area { padding: 12px; border-top: 1px solid #eee; background: white; display: flex; gap: 8px; align-items: center; }
-        .chat-input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 8px 15px; outline: none; background: #f0f2f5; }
-        .chat-input:focus { border-color: #fa4299; background: white; }
-        .chat-send-btn { background: transparent; color: #fa4299; border: none; font-size: 20px; cursor: pointer; padding: 5px; transition: 0.2s; }
-        .chat-send-btn:hover { transform: scale(1.1); }
+      /* Team Grid */
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+      }
 
+      .team-card {
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 12px;
+        padding: 30px 20px;
+        text-align: center;
+        transition: 0.3s;
+        position: relative;
+        overflow: hidden;
+      }
+      .team-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(250, 66, 153, 0.15);
+        border-color: var(--primary-pink);
+      }
+
+      .team-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 15px;
+        border: 3px solid #ffe6f0;
+      }
+      .team-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+      }
+      .team-role {
+        font-size: 14px;
+        color: var(--primary-pink);
+        font-weight: 500;
+      }
+
+      /* ✅ เพิ่ม CSS ปุ่มแชทในการ์ด */
+      .btn-team-chat {
+        margin-top: 10px;
+        padding: 6px 15px;
+        border: 1px solid #fa4299;
+        background: white;
+        color: #fa4299;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: 0.3s;
+      }
+      .btn-team-chat:hover {
+        background: #fa4299;
+        color: white;
+      }
+
+      /* Advisor Card */
+      .advisor-section {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+      }
+      .advisor-card {
+        max-width: 350px;
+        width: 100%;
+        background: linear-gradient(135deg, #fff 0%, #fffbfd 100%);
+        border: 2px solid #ffd700;
+      }
+      .advisor-card .team-role {
+        background: #fff9c4;
+        color: #fbc02d;
+        padding: 4px 12px;
+        border-radius: 20px;
+      }
+
+      /* Contact Box */
+      .contact-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        margin-top: 20px;
+      }
+      .contact-pill {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #f8f9fa;
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-size: 15px;
+        color: #555;
+        transition: 0.2s;
+      }
+      .contact-pill:hover {
+        background: var(--primary-pink);
+        color: white;
+        transform: scale(1.05);
+      }
+      .contact-pill i {
+        font-size: 18px;
+      }
+
+      /* --- CHAT CSS --- */
+      .chat-toggle-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background: #fa4299;
+        color: white;
+        border-radius: 50%;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+        cursor: pointer;
+        z-index: 9999;
+        transition: transform 0.3s;
+      }
+      .chat-toggle-btn:hover {
+        transform: scale(1.1);
+      }
+
+      .chat-box {
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        width: 340px;
+        height: 500px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 5px 30px rgba(0, 0, 0, 0.15);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        z-index: 9999;
+        border: 1px solid #eee;
+      }
+
+      /* Chat Header */
+      .chat-header {
+        background: #fa4299;
+        color: white;
+        padding: 15px;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 60px;
+      }
+      .chat-header-user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .chat-header-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: white;
+        border: 2px solid white;
+      }
+      .chat-back-btn {
+        cursor: pointer;
+        font-size: 18px;
+        margin-right: 10px;
+        display: none;
+      }
+      .chat-close {
+        cursor: pointer;
+        font-size: 20px;
+        opacity: 0.8;
+      }
+      .chat-close:hover {
+        opacity: 1;
+      }
+
+      /* Views */
+      .view-section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      /* Inbox View */
+      .inbox-list {
+        flex: 1;
+        overflow-y: auto;
+      }
+      .inbox-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        border-bottom: 1px solid #f5f5f5;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .inbox-item:hover {
+        background: #fff0f5;
+      }
+      .inbox-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        margin-right: 12px;
+        object-fit: cover;
+        border: 1px solid #eee;
+      }
+      .inbox-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .inbox-name {
+        font-weight: 600;
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 3px;
+      }
+      .inbox-last-msg {
+        font-size: 12px;
+        color: #888;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Messages View */
+      .chat-messages {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        background: #f9f9f9;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .msg-row {
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+      }
+      .msg-row.me {
+        flex-direction: row-reverse;
+      }
+      .msg-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .msg-bubble {
+        max-width: 75%;
+        padding: 8px 14px;
+        border-radius: 18px;
+        font-size: 14px;
+        word-wrap: break-word;
+        position: relative;
+      }
+      .msg-row.other .msg-bubble {
+        background: #e4e6eb;
+        color: #333;
+        border-bottom-left-radius: 4px;
+      }
+      .msg-row.me .msg-bubble {
+        background: #fa4299;
+        color: white;
+        border-bottom-right-radius: 4px;
+      }
+      .msg-time {
+        font-size: 10px;
+        color: #aaa;
+        margin-top: 2px;
+      }
+      .msg-row.me .msg-time {
+        text-align: right;
+      }
+
+      .chat-input-area {
+        padding: 12px;
+        border-top: 1px solid #eee;
+        background: white;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .chat-input {
+        flex: 1;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 8px 15px;
+        outline: none;
+        background: #f0f2f5;
+      }
+      .chat-input:focus {
+        border-color: #fa4299;
+        background: white;
+      }
+      .chat-send-btn {
+        background: transparent;
+        color: #fa4299;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 5px;
+        transition: 0.2s;
+      }
+      .chat-send-btn:hover {
+        transform: scale(1.1);
+      }
     </style>
-</head>
-<body>
-
-<nav>
-    <div class="nav-left">
+  </head>
+  <body>
+    <nav>
+      <div class="nav-left">
         <a href="main.html" class="nav-logo">
-            <img src="images/Logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/150x50?text=LOGO'">
+          <img
+            src="images/Logo.png"
+            alt="Logo"
+            onerror="this.src = 'https://via.placeholder.com/150x50?text=LOGO'"
+          />
         </a>
-    </div>
+      </div>
 
-    <div class="nav-menu">
+      <div class="nav-menu">
         <a href="main.html">หน้าแรก</a>
         <a href="dashboard.html">บอร์ด</a>
         <a href="tutor.html">ผู้คน</a>
         <a href="aboutus.html" class="active">เกี่ยวกับ</a>
-        <a href="feed.html">โพสต์</a>     
+        <a href="feed.html">โพสต์</a>
         <a href="ebook.html">E-Book</a>
-    </div>
+      </div>
 
-    <div class="nav-right" id="navRightContent">
+      <div class="nav-right" id="navRightContent">
         <a href="login.html" class="btn-login">เข้าสู่ระบบ</a>
-    </div>
-</nav>
+      </div>
+    </nav>
 
-<template id="loggedInTemplate">
-    <div class="noti-icon-container" onclick="toggleNotification(event)">
+    <template id="loggedInTemplate">
+      <div class="noti-icon-container" onclick="toggleNotification(event)">
         <i class="fas fa-bell noti-icon"></i>
         <span class="noti-badge" id="notiCount">0</span>
-        
+
         <div class="noti-dropdown" id="notiDropdown">
-            <div class="noti-header">
-                <span>การแจ้งเตือน</span>
-                <span style="cursor:pointer; font-size:12px;" onclick="markAllRead()">อ่านทั้งหมด</span>
-            </div>
-            <div class="noti-content" id="notiList">
-                <div class="no-noti">กำลังโหลด...</div>
-            </div>
+          <div class="noti-header">
+            <span>การแจ้งเตือน</span>
+            <span
+              style="cursor: pointer; font-size: 12px"
+              onclick="markAllRead()"
+              >อ่านทั้งหมด</span
+            >
+          </div>
+          <div class="noti-content" id="notiList">
+            <div class="no-noti">กำลังโหลด...</div>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <div style="display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="window.location.href='profile.html'">
-        <img id="userAvatar" src="images/default-avatar.png" style="width:40px; height:40px; border-radius:50%; border:2px solid #ff2d78; object-fit:cover;">
-        <span id="userName" style="font-weight:600; color:#333;">Username</span>
-    </div>
-    
-    <a href="#" onclick="logout()" style="color:#888; font-size:18px; margin-left:10px;" title="ออกจากระบบ"><i class="fas fa-sign-out-alt"></i></a>
-</template>
+      <div
+        style="display: flex; align-items: center; gap: 10px; cursor: pointer"
+        onclick="window.location.href = 'profile.html'"
+      >
+        <img
+          id="userAvatar"
+          src="images/default-avatar.png"
+          style="
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #ff2d78;
+            object-fit: cover;
+          "
+        />
+        <span id="userName" style="font-weight: 600; color: #333"
+          >Username</span
+        >
+      </div>
 
-<div class="container">
-    
-    <div class="about-header">
+      <a
+        href="#"
+        onclick="logout()"
+        style="color: #888; font-size: 18px; margin-left: 10px"
+        title="ออกจากระบบ"
+        ><i class="fas fa-sign-out-alt"></i
+      ></a>
+    </template>
+
+    <div class="container">
+      <div class="about-header">
         <div class="about-title">เกี่ยวกับเรา Study Group</div>
-        <div class="about-subtitle">แพลตฟอร์มคอมมูนิตี้สำหรับคนรักการเรียนรู้ หาเพื่อนติว หาติวเตอร์ และแบ่งปันความรู้</div>
-    </div>
+        <div class="about-subtitle">
+          แพลตฟอร์มคอมมูนิตี้สำหรับคนรักการเรียนรู้ หาเพื่อนติว หาติวเตอร์
+          และแบ่งปันความรู้
+        </div>
+      </div>
 
-    <div class="content-box">
-        <div class="section-title"><i class="fas fa-bullseye"></i> วัตถุประสงค์ของเรา</div>
+      <div class="content-box">
+        <div class="section-title">
+          <i class="fas fa-bullseye"></i> วัตถุประสงค์ของเรา
+        </div>
         <div class="text-content">
-            <p>Study Group ก่อตั้งขึ้นเพื่อเป็นพื้นที่กลาง (Community) ให้กับนักเรียน นักศึกษา และบุคคลทั่วไปที่มีความสนใจในการเรียนรู้ ได้มาพบปะพูดคุย แลกเปลี่ยนความรู้ และช่วยเหลือซึ่งกันและกัน</p>
-            <br>
-            <h3 style="color:#333; font-style: italic;">" การเรียนรู้ที่ดีที่สุด คือการเรียนรู้ร่วมกัน <br> ผ่านการเรียนรู้แบบเพื่อนสอนเพื่อน "</h3>
-            <br>
-            <p>เราจึงมุ่งมั่นพัฒนาระบบที่จะช่วยให้การศึกษาเข้าถึงง่าย สนุก และมีประสิทธิภาพมากยิ่งขึ้น</p>
+          <p>
+            Study Group ก่อตั้งขึ้นเพื่อเป็นพื้นที่กลาง (Community)
+            ให้กับนักเรียน นักศึกษา และบุคคลทั่วไปที่มีความสนใจในการเรียนรู้
+            ได้มาพบปะพูดคุย แลกเปลี่ยนความรู้ และช่วยเหลือซึ่งกันและกัน
+          </p>
+          <br />
+          <h3 style="color: #333; font-style: italic">
+            " การเรียนรู้ที่ดีที่สุด คือการเรียนรู้ร่วมกัน <br />
+            ผ่านการเรียนรู้แบบเพื่อนสอนเพื่อน "
+          </h3>
+          <br />
+          <p>
+            เราจึงมุ่งมั่นพัฒนาระบบที่จะช่วยให้การศึกษาเข้าถึงง่าย สนุก
+            และมีประสิทธิภาพมากยิ่งขึ้น
+          </p>
         </div>
-    </div>
+      </div>
 
-    <div class="content-box">
+      <div class="content-box">
         <div class="section-title"><i class="fas fa-code"></i> ทีมผู้พัฒนา</div>
-        <div class="text-content" style="margin-bottom: 20px;">
-            พวกเราคือเด็กนักเรียนจากห้องเรียนสเต็มศึกษา (STEM Education)<br>
-            <b>โรงเรียนส่วนบุญโญปถัมภ์ ลำพูน</b>
+        <div class="text-content" style="margin-bottom: 20px">
+          พวกเราคือเด็กนักเรียนจากห้องเรียนสเต็มศึกษา (STEM Education)<br />
+          <b>โรงเรียนส่วนบุญโญปถัมภ์ ลำพูน</b>
         </div>
-        
+
         <div class="team-grid">
-            <div class="team-card">
-                <img src="images/Pee.jpg" class="team-img" alt="Pee" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4140/4140048.png'">
-                <div class="team-name">นายพีรวิชญ์ มะโนชมภู</div>
-                <div class="team-role">UX/UI Designer</div>
-                <button class="btn-team-chat" onclick="startChatWithUser('team_pee', 'พีรวิชญ์', 'images/Pee.jpg')">
-                    <i class="fas fa-comment-dots"></i> แชทเลย
-                </button>
-            </div>
+          <div class="team-card">
+            <img
+              src="images/Pee.jpg"
+              class="team-img"
+              alt="Pee"
+              onerror="
+                this.src =
+                  'https://cdn-icons-png.flaticon.com/512/4140/4140048.png'
+              "
+            />
+            <div class="team-name">นายพีรวิชญ์ มะโนชมภู</div>
+            <div class="team-role">UX/UI Designer</div>
+            <button
+              class="btn-team-chat"
+              onclick="
+                startChatWithUser('team_pee', 'พีรวิชญ์', 'images/Pee.jpg')
+              "
+            >
+              <i class="fas fa-comment-dots"></i> แชทเลย
+            </button>
+          </div>
 
-            <div class="team-card">
-                <img src="images/Sunny.jpg" class="team-img" alt="Sunny" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4140/4140037.png'">
-                <div class="team-name">นายณิชกุล ภัทรทวีรัตร์</div>
-                <div class="team-role">Full Stack Developer</div>
-                <button class="btn-team-chat" onclick="startChatWithUser('team_sunny', 'ณิชกุล', 'images/Sunny.jpg')">
-                    <i class="fas fa-comment-dots"></i> แชทเลย
-                </button>
-            </div>
+          <div class="team-card">
+            <img
+              src="images/Sunny.jpg"
+              class="team-img"
+              alt="Sunny"
+              onerror="
+                this.src =
+                  'https://cdn-icons-png.flaticon.com/512/4140/4140037.png'
+              "
+            />
+            <div class="team-name">นายณิชกุล ภัทรทวีรัตร์</div>
+            <div class="team-role">Full Stack Developer</div>
+            <button
+              class="btn-team-chat"
+              onclick="
+                startChatWithUser('team_sunny', 'ณิชกุล', 'images/Sunny.jpg')
+              "
+            >
+              <i class="fas fa-comment-dots"></i> แชทเลย
+            </button>
+          </div>
 
-            <div class="team-card">
-                <img src="images/Pawanrat.jpg" class="team-img" alt="Pawanrat" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4140/4140047.png'">
-                <div class="team-name">น.ส.ปวันรัตน์ เจริญศรีสุวรรณ</div>
-                <div class="team-role">Database Administrator</div>
-                <button class="btn-team-chat" onclick="startChatWithUser('team_pawanrat', 'ปวันรัตน์', 'images/Pawanrat.jpg')">
-                    <i class="fas fa-comment-dots"></i> แชทเลย
-                </button>
-            </div>
+          <div class="team-card">
+            <img
+              src="images/Pawanrat.jpg"
+              class="team-img"
+              alt="Pawanrat"
+              onerror="
+                this.src =
+                  'https://cdn-icons-png.flaticon.com/512/4140/4140047.png'
+              "
+            />
+            <div class="team-name">น.ส.ปวันรัตน์ เจริญศรีสุวรรณ</div>
+            <div class="team-role">Database Administrator</div>
+            <button
+              class="btn-team-chat"
+              onclick="
+                startChatWithUser(
+                  'team_pawanrat',
+                  'ปวันรัตน์',
+                  'images/Pawanrat.jpg',
+                )
+              "
+            >
+              <i class="fas fa-comment-dots"></i> แชทเลย
+            </button>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <div class="content-box" style="background: #fffdf5; border: 1px solid #ffeeba;">
-        <div class="section-title" style="color: #fbc02d;"><i class="fas fa-chalkboard-teacher"></i> ครูที่ปรึกษาของพวกเรา</div>
+      <div
+        class="content-box"
+        style="background: #fffdf5; border: 1px solid #ffeeba"
+      >
+        <div class="section-title" style="color: #fbc02d">
+          <i class="fas fa-chalkboard-teacher"></i> ครูที่ปรึกษาของพวกเรา
+        </div>
         <div class="advisor-section">
-            <div class="team-card advisor-card">
-                <img src="images/Taweep.jpg" class="team-img" alt="Teacher" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
-                <div class="team-name">นายทวีป นวคุณานนท์</div>
-                <div class="team-role">ที่ปรึกษาและหัวเรือใหญ่</div>
-                <p style="margin-top:10px; font-size:13px; color:#777;">ผู้สนับสนุนและผลักดันให้โปรเจกต์นี้เกิดขึ้นจริง</p>
-                <button class="btn-team-chat" onclick="startChatWithUser('team_taweep', 'อ.ทวีป', 'images/Taweep.jpg')">
-                    <i class="fas fa-comment-dots"></i> สอบถาม
-                </button>
-            </div>
+          <div class="team-card advisor-card">
+            <img
+              src="images/Taweep.jpg"
+              class="team-img"
+              alt="Teacher"
+              onerror="
+                this.src =
+                  'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
+              "
+            />
+            <div class="team-name">นายทวีป นวคุณานนท์</div>
+            <div class="team-role">ที่ปรึกษาและหัวเรือใหญ่</div>
+            <p style="margin-top: 10px; font-size: 13px; color: #777">
+              ผู้สนับสนุนและผลักดันให้โปรเจกต์นี้เกิดขึ้นจริง
+            </p>
+            <button
+              class="btn-team-chat"
+              onclick="
+                startChatWithUser('team_taweep', 'อ.ทวีป', 'images/Taweep.jpg')
+              "
+            >
+              <i class="fas fa-comment-dots"></i> สอบถาม
+            </button>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <div class="content-box" style="text-align: center;">
-        <div class="section-title"><i class="fas fa-envelope-open-text"></i> ติดต่อทีมงาน</div>
-        <p style="color:#666; margin-bottom: 20px;">หากมีข้อเสนอแนะ หรือพบปัญหาการใช้งาน สามารถติดต่อได้ที่</p>
-        
+      <div class="content-box" style="text-align: center">
+        <div class="section-title">
+          <i class="fas fa-envelope-open-text"></i> ติดต่อทีมงาน
+        </div>
+        <p style="color: #666; margin-bottom: 20px">
+          หากมีข้อเสนอแนะ หรือพบปัญหาการใช้งาน สามารถติดต่อได้ที่
+        </p>
+
         <div class="contact-container">
-            <div class="contact-pill">
-                <i class="fab fa-facebook" style="color:#ff2d78;"></i> StudyGroup Official
-            </div>
-            <div class="contact-pill">
-                <i class="fas fa-envelope" style="color:#ff2d78;"></i> sby_37380@sby.ac.th
-            </div>
-            <div class="contact-pill">
-                <i class="fas fa-phone-alt" style="color:#ff2d78;"></i> 085-586-6661
-            </div>
+          <div class="contact-pill">
+            <i class="fab fa-facebook" style="color: #ff2d78"></i> StudyGroup
+            Official
+          </div>
+          <div class="contact-pill">
+            <i class="fas fa-envelope" style="color: #ff2d78"></i>
+            sby_37380@sby.ac.th
+          </div>
+          <div class="contact-pill">
+            <i class="fas fa-phone-alt" style="color: #ff2d78"></i> 085-586-6661
+          </div>
         </div>
+      </div>
     </div>
 
-</div>
+    <div class="chat-toggle-btn" onclick="toggleChat()">
+      <i class="fas fa-comment-dots"></i>
+    </div>
 
-<div class="chat-toggle-btn" onclick="toggleChat()">
-    <i class="fas fa-comment-dots"></i>
-</div>
-
-<div class="chat-box" id="chatBox">
-    <div class="chat-header">
+    <div class="chat-box" id="chatBox">
+      <div class="chat-header">
         <div class="chat-header-user">
-            <i class="fas fa-arrow-left chat-back-btn" id="chatBackBtn" onclick="backToInbox()"></i>
-            <span id="chatTitle">ข้อความ</span>
+          <i
+            class="fas fa-arrow-left chat-back-btn"
+            id="chatBackBtn"
+            onclick="backToInbox()"
+          ></i>
+          <span id="chatTitle">ข้อความ</span>
         </div>
         <span class="chat-close" onclick="toggleChat()">×</span>
-    </div>
+      </div>
 
-    <div class="view-section" id="inboxView">
+      <div class="view-section" id="inboxView">
         <div class="inbox-list" id="inboxList">
-            <div style="text-align:center; padding:20px; color:#999;">กำลังโหลด...</div>
+          <div style="text-align: center; padding: 20px; color: #999">
+            กำลังโหลด...
+          </div>
         </div>
-    </div>
+      </div>
 
-    <div class="view-section" id="chatView" style="display:none;">
-        <div class="chat-messages" id="chatMessages">
-            </div>
+      <div class="view-section" id="chatView" style="display: none">
+        <div class="chat-messages" id="chatMessages"></div>
         <div class="chat-input-area">
-            <input type="text" id="chatInput" class="chat-input" placeholder="พิมพ์ข้อความ..." onkeypress="handleEnter(event)">
-            <button class="chat-send-btn" onclick="sendPrivateMessage()"><i class="fas fa-paper-plane"></i></button>
+          <input
+            type="text"
+            id="chatInput"
+            class="chat-input"
+            placeholder="พิมพ์ข้อความ..."
+            onkeypress="handleEnter(event)"
+          />
+          <button class="chat-send-btn" onclick="sendPrivateMessage()">
+            <i class="fas fa-paper-plane"></i>
+          </button>
         </div>
+      </div>
     </div>
-</div>
 
-<script>
-    const BASE_API = 'http://localhost:3000'; 
+    <script>
+      const BASE_API = "http://localhost:3000";
 
-    // --- 1. ตรวจสอบ Login / Notification ---
-    document.addEventListener('DOMContentLoaded', () => {
+      // --- 1. ตรวจสอบ Login / Notification ---
+      document.addEventListener("DOMContentLoaded", () => {
         checkLoginStatus();
-        
-        if(localStorage.getItem('currentUser')) {
-            loadNotifications();
-            setInterval(loadNotifications, 5000); 
+
+        if (localStorage.getItem("currentUser")) {
+          loadNotifications();
+          setInterval(loadNotifications, 5000);
         }
 
-        window.addEventListener('click', (e) => {
-            const notiContainer = document.getElementById('notiContainer');
-            if (notiContainer && !notiContainer.contains(e.target)) {
-                const dropdown = document.getElementById('notiDropdown');
-                if(dropdown) dropdown.classList.remove('active');
-            }
+        window.addEventListener("click", (e) => {
+          const notiContainer = document.getElementById("notiContainer");
+          if (notiContainer && !notiContainer.contains(e.target)) {
+            const dropdown = document.getElementById("notiDropdown");
+            if (dropdown) dropdown.classList.remove("active");
+          }
         });
-    });
+      });
 
-    function checkLoginStatus() {
-        const userJson = localStorage.getItem('currentUser');
-        const navRight = document.getElementById('navRightContent');
-        const template = document.getElementById('loggedInTemplate');
+      function checkLoginStatus() {
+        const userJson = localStorage.getItem("currentUser");
+        const navRight = document.getElementById("navRightContent");
+        const template = document.getElementById("loggedInTemplate");
 
         if (userJson && template) {
-            const user = JSON.parse(userJson);
-            const content = template.content.cloneNode(true);
-            navRight.innerHTML = ''; 
-            navRight.appendChild(content);
+          const user = JSON.parse(userJson);
+          const content = template.content.cloneNode(true);
+          navRight.innerHTML = "";
+          navRight.appendChild(content);
 
-            const userNameEl = document.getElementById('userName');
-            const userAvatarEl = document.getElementById('userAvatar');
+          const userNameEl = document.getElementById("userName");
+          const userAvatarEl = document.getElementById("userAvatar");
 
-            if(userNameEl) userNameEl.textContent = user.username || user.name;
-            if(userAvatarEl) {
-                userAvatarEl.src = (user.avatar && user.avatar.length > 10) 
-                    ? user.avatar 
-                    : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-            }
+          if (userNameEl) userNameEl.textContent = user.username || user.name;
+          if (userAvatarEl) {
+            userAvatarEl.src =
+              user.avatar && user.avatar.length > 10
+                ? user.avatar
+                : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+          }
         }
-    }
+      }
 
-    function logout() {
+      function logout() {
         Swal.fire({
-            title: 'ออกจากระบบ?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#fa4299',
-            cancelButtonText: 'ยกเลิก',
-            confirmButtonText: 'ใช่, ออกจากระบบ'
+          title: "ออกจากระบบ?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonColor: "#fa4299",
+          cancelButtonText: "ยกเลิก",
+          confirmButtonText: "ใช่, ออกจากระบบ",
         }).then((result) => {
-            if (result.isConfirmed) {
-                localStorage.removeItem('currentUser');
-                window.location.reload();
-            }
+          if (result.isConfirmed) {
+            localStorage.removeItem("currentUser");
+            window.location.reload();
+          }
         });
-    }
+      }
 
-    // --- Notification Logic ---
-    function toggleNotification(event) {
-        if(event) event.stopPropagation();
-        const dropdown = document.getElementById('notiDropdown');
-        if(dropdown) dropdown.classList.toggle('active');
-    }
+      // --- Notification Logic ---
+      function toggleNotification(event) {
+        if (event) event.stopPropagation();
+        const dropdown = document.getElementById("notiDropdown");
+        if (dropdown) dropdown.classList.toggle("active");
+      }
 
-    async function loadNotifications() {
-        const userJson = localStorage.getItem('currentUser');
+      async function loadNotifications() {
+        const userJson = localStorage.getItem("currentUser");
         if (!userJson) return;
         const user = JSON.parse(userJson);
-        const list = document.getElementById('notiList');
-        const badge = document.getElementById('notiCount');
+        const list = document.getElementById("notiList");
+        const badge = document.getElementById("notiCount");
 
         try {
-            if(!list) return;
-            const res = await fetch(`${BASE_API}/api/notifications?userId=${user.id}`);
-            const notifications = await res.json();
-            
-            if (!Array.isArray(notifications)) return;
+          if (!list) return;
+          const res = await fetch(
+            `${BASE_API}/api/notifications?userId=${user.id}`,
+          );
+          const notifications = await res.json();
 
-            const unreadCount = notifications.filter(n => !n.read).length;
-            if (unreadCount > 0) {
-                badge.style.display = 'flex';
-                badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
-            } else {
-                badge.style.display = 'none';
-            }
+          if (!Array.isArray(notifications)) return;
 
-            if (notifications.length === 0) {
-                list.innerHTML = '<div class="no-noti">ไม่มีการแจ้งเตือน</div>';
-            } else {
-                list.innerHTML = notifications.map(item => `
-                    <div class="noti-item ${item.read ? '' : 'unread'}">
-                        <img src="${item.senderAvatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="noti-avatar">
+          const unreadCount = notifications.filter((n) => !n.read).length;
+          if (unreadCount > 0) {
+            badge.style.display = "flex";
+            badge.textContent = unreadCount > 9 ? "9+" : unreadCount;
+          } else {
+            badge.style.display = "none";
+          }
+
+          if (notifications.length === 0) {
+            list.innerHTML = '<div class="no-noti">ไม่มีการแจ้งเตือน</div>';
+          } else {
+            list.innerHTML = notifications
+              .map(
+                (item) => `
+                    <div class="noti-item ${item.read ? "" : "unread"}">
+                        <img src="${item.senderAvatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}" class="noti-avatar">
                         <div style="flex:1">
                             <div class="noti-text">
                                 <strong>${item.senderName}</strong> ${item.message}
@@ -484,225 +989,247 @@
                             <span class="noti-time">${item.time}</span>
                         </div>
                     </div>
-                `).join('');
-            }
-        } catch (error) { console.error("โหลดแจ้งเตือนไม่สำเร็จ", error); }
-    }
+                `,
+              )
+              .join("");
+          }
+        } catch (error) {
+          console.error("โหลดแจ้งเตือนไม่สำเร็จ", error);
+        }
+      }
 
-    async function markAllRead() {
-        const badge = document.getElementById('notiCount');
-        if (badge) badge.style.display = 'none';
-        const unreadItems = document.querySelectorAll('.noti-item.unread');
-        unreadItems.forEach(item => {
-            item.classList.remove('unread');
-            item.style.backgroundColor = 'white';
-            item.style.borderLeft = 'none';
+      async function markAllRead() {
+        const badge = document.getElementById("notiCount");
+        if (badge) badge.style.display = "none";
+        const unreadItems = document.querySelectorAll(".noti-item.unread");
+        unreadItems.forEach((item) => {
+          item.classList.remove("unread");
+          item.style.backgroundColor = "white";
+          item.style.borderLeft = "none";
         });
 
-        const userJson = localStorage.getItem('currentUser');
+        const userJson = localStorage.getItem("currentUser");
         if (!userJson) return;
         const user = JSON.parse(userJson);
 
         try {
-            await fetch(`${BASE_API}/api/notifications/mark-read`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: user.id })
-            });
-        } catch (err) { console.error("Error mark read", err); }
-    }
+          await fetch(`${BASE_API}/api/notifications/mark-read`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: user.id }),
+          });
+        } catch (err) {
+          console.error("Error mark read", err);
+        }
+      }
 
-    // ===============================================
-    // 💬 PRIVATE CHAT LOGIC (IG Style)
-    // ===============================================
-    let isChatOpen = false;
-    let chatInterval = null;
-    let currentChatPartner = null; 
+      // ===============================================
+      // 💬 PRIVATE CHAT LOGIC (IG Style)
+      // ===============================================
+      let isChatOpen = false;
+      let chatInterval = null;
+      let currentChatPartner = null;
 
-    function toggleChat() {
-        const box = document.getElementById('chatBox');
+      function toggleChat() {
+        const box = document.getElementById("chatBox");
         const userJson = localStorage.getItem("currentUser");
 
         if (!userJson) {
-            Swal.fire('แจ้งเตือน', 'กรุณาเข้าสู่ระบบก่อนใช้งานแชท', 'warning');
-            return;
+          Swal.fire("แจ้งเตือน", "กรุณาเข้าสู่ระบบก่อนใช้งานแชท", "warning");
+          return;
         }
 
         isChatOpen = !isChatOpen;
-        box.style.display = isChatOpen ? 'flex' : 'none';
+        box.style.display = isChatOpen ? "flex" : "none";
 
         if (isChatOpen) {
-            // เปิดมาครั้งแรก ให้โหลด Inbox เสมอ
-            backToInbox();
-            chatInterval = setInterval(refreshChat, 3000); 
+          // เปิดมาครั้งแรก ให้โหลด Inbox เสมอ
+          backToInbox();
+          chatInterval = setInterval(refreshChat, 3000);
         } else {
-            clearInterval(chatInterval); 
+          clearInterval(chatInterval);
         }
-    }
+      }
 
-    function refreshChat() {
+      function refreshChat() {
         if (!isChatOpen) return;
         if (currentChatPartner) {
-            loadPrivateMessages(); 
+          loadPrivateMessages();
         } else {
-            loadInbox(); 
+          loadInbox();
         }
-    }
+      }
 
-    // ✅ ฟังก์ชัน: กดปุ่มแชทจากการ์ดทีมงาน
-    function startChatWithUser(id, name, avatar) {
+      // ✅ ฟังก์ชัน: กดปุ่มแชทจากการ์ดทีมงาน
+      function startChatWithUser(id, name, avatar) {
         // สร้างข้อมูลคู่สนทนาจำลอง
         const partnerObj = {
-            partnerId: id,
-            partnerName: name,
-            partnerAvatar: avatar
+          partnerId: id,
+          partnerName: name,
+          partnerAvatar: avatar,
         };
-        
+
         // เปิดกล่องแชท (ถ้ายังไม่เปิด)
-        const box = document.getElementById('chatBox');
-        if(box.style.display === 'none' || !box.style.display) {
-            toggleChat(); 
+        const box = document.getElementById("chatBox");
+        if (box.style.display === "none" || !box.style.display) {
+          toggleChat();
         }
-        
+
         // เข้าหน้าแชททันที
         openChat(partnerObj);
-    }
+      }
 
-    // --- 1. หน้า Inbox ---
-    async function loadInbox() {
+      // --- 1. หน้า Inbox ---
+      async function loadInbox() {
         const user = JSON.parse(localStorage.getItem("currentUser"));
-        const inboxList = document.getElementById('inboxList');
-        
-        try {
-            const res = await fetch(`${BASE_API}/api/chat-inbox/${user.id}`);
-            const data = await res.json();
+        const inboxList = document.getElementById("inboxList");
 
-            if (data.length === 0) {
-                inboxList.innerHTML = `
+        try {
+          const res = await fetch(`${BASE_API}/api/chat-inbox/${user.id}`);
+          const data = await res.json();
+
+          if (data.length === 0) {
+            inboxList.innerHTML = `
                     <div style="text-align:center; padding:40px; color:#aaa;">
                         <i class="far fa-paper-plane" style="font-size:30px; margin-bottom:10px;"></i><br>
                         ยังไม่มีข้อความ<br>
                         <small>เลือก "แชทเลย" จากทีมงานด้านบน</small>
                     </div>`;
-                return;
-            }
+            return;
+          }
 
-            inboxList.innerHTML = data.map(chat => `
+          inboxList.innerHTML = data
+            .map(
+              (chat) => `
                 <div class="inbox-item" onclick='openChat(${JSON.stringify(chat)})'>
-                    <img src="${chat.partnerAvatar || 'https://via.placeholder.com/40'}" class="inbox-avatar">
+                    <img src="${chat.partnerAvatar || "https://via.placeholder.com/40"}" class="inbox-avatar">
                     <div class="inbox-info">
                         <div class="inbox-name">${chat.partnerName}</div>
                         <div class="inbox-last-msg">${chat.lastMessage}</div>
                     </div>
                 </div>
-            `).join('');
-            
+            `,
+            )
+            .join("");
         } catch (error) {
-            console.error("Load inbox error", error);
+          console.error("Load inbox error", error);
         }
-    }
+      }
 
-    // --- 2. เปิดห้องแชท (Open Chat) ---
-    function openChat(partner) {
+      // --- 2. เปิดห้องแชท (Open Chat) ---
+      function openChat(partner) {
         // ✅ Normalize ID (รับค่าได้ทั้งจาก Inbox และจากการ์ดคน)
         const pId = partner.partnerId || partner.id;
         const pName = partner.partnerName || partner.name;
-        const pAvatar = partner.partnerAvatar || partner.avatar || 'https://via.placeholder.com/30';
+        const pAvatar =
+          partner.partnerAvatar ||
+          partner.avatar ||
+          "https://via.placeholder.com/30";
 
-        currentChatPartner = { 
-            partnerId: pId, 
-            partnerName: pName, 
-            partnerAvatar: pAvatar 
+        currentChatPartner = {
+          partnerId: pId,
+          partnerName: pName,
+          partnerAvatar: pAvatar,
         };
-        
+
         // สลับ UI
-        document.getElementById('inboxView').style.display = 'none';
-        document.getElementById('chatView').style.display = 'flex';
-        document.getElementById('chatBackBtn').style.display = 'block';
-        
+        document.getElementById("inboxView").style.display = "none";
+        document.getElementById("chatView").style.display = "flex";
+        document.getElementById("chatBackBtn").style.display = "block";
+
         // เปลี่ยนหัวข้อ
-        document.getElementById('chatTitle').innerHTML = `
+        document.getElementById("chatTitle").innerHTML = `
             <img src="${pAvatar}" style="width:25px; height:25px; border-radius:50%; vertical-align:middle; object-fit:cover;"> 
             ${pName}`;
 
         loadPrivateMessages();
         setTimeout(scrollToBottom, 200);
-    }
+      }
 
-    // --- 3. กลับหน้า Inbox ---
-    function backToInbox() {
+      // --- 3. กลับหน้า Inbox ---
+      function backToInbox() {
         currentChatPartner = null;
-        document.getElementById('inboxView').style.display = 'flex';
-        document.getElementById('chatView').style.display = 'none';
-        document.getElementById('chatBackBtn').style.display = 'none';
-        document.getElementById('chatTitle').textContent = 'ข้อความ';
+        document.getElementById("inboxView").style.display = "flex";
+        document.getElementById("chatView").style.display = "none";
+        document.getElementById("chatBackBtn").style.display = "none";
+        document.getElementById("chatTitle").textContent = "ข้อความ";
         loadInbox();
-    }
+      }
 
-    // --- 4. โหลดข้อความแชท ---
-    async function loadPrivateMessages() {
+      // --- 4. โหลดข้อความแชท ---
+      async function loadPrivateMessages() {
         if (!currentChatPartner) return;
         const user = JSON.parse(localStorage.getItem("currentUser"));
-        const container = document.getElementById('chatMessages');
+        const container = document.getElementById("chatMessages");
 
         try {
-            const res = await fetch(`${BASE_API}/api/private-chat/${user.id}/${currentChatPartner.partnerId}`);
-            const messages = await res.json();
-            
-            const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+          const res = await fetch(
+            `${BASE_API}/api/private-chat/${user.id}/${currentChatPartner.partnerId}`,
+          );
+          const messages = await res.json();
 
-            container.innerHTML = messages.map(msg => {
-                const isMe = String(msg.fromId) === String(user.id);
-                return `
-                    <div class="msg-row ${isMe ? 'me' : 'other'}">
-                        ${!isMe ? `<img src="${msg.senderAvatar || 'https://via.placeholder.com/30'}" class="msg-avatar">` : ''}
+          const isAtBottom =
+            container.scrollHeight - container.scrollTop <=
+            container.clientHeight + 100;
+
+          container.innerHTML = messages
+            .map((msg) => {
+              const isMe = String(msg.fromId) === String(user.id);
+              return `
+                    <div class="msg-row ${isMe ? "me" : "other"}">
+                        ${!isMe ? `<img src="${msg.senderAvatar || "https://via.placeholder.com/30"}" class="msg-avatar">` : ""}
                         <div>
                             <div class="msg-bubble">${msg.message}</div>
                         </div>
                     </div>
                 `;
-            }).join('');
+            })
+            .join("");
 
-            if (isAtBottom) scrollToBottom();
-            
-        } catch (err) { console.error("Chat Error:", err); }
-    }
+          if (isAtBottom) scrollToBottom();
+        } catch (err) {
+          console.error("Chat Error:", err);
+        }
+      }
 
-    // --- 5. ส่งข้อความ ---
-    async function sendPrivateMessage() {
+      // --- 5. ส่งข้อความ ---
+      async function sendPrivateMessage() {
         if (!currentChatPartner) return;
-        
-        const input = document.getElementById('chatInput');
+
+        const input = document.getElementById("chatInput");
         const text = input.value.trim();
         if (!text) return;
-        
+
         const user = JSON.parse(localStorage.getItem("currentUser"));
 
         try {
-            await fetch(`${BASE_API}/api/private-chat`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    fromId: user.id,
-                    toId: currentChatPartner.partnerId,
-                    message: text,
-                    senderName: user.username || user.name,
-                    senderAvatar: user.avatar
-                })
-            });
-            input.value = ''; 
-            loadPrivateMessages(); 
-            scrollToBottom();
-        } catch (e) { console.log("ส่งข้อความไม่ได้"); }
-    }
+          await fetch(`${BASE_API}/api/private-chat`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              fromId: user.id,
+              toId: currentChatPartner.partnerId,
+              message: text,
+              senderName: user.username || user.name,
+              senderAvatar: user.avatar,
+            }),
+          });
+          input.value = "";
+          loadPrivateMessages();
+          scrollToBottom();
+        } catch (e) {
+          console.log("ส่งข้อความไม่ได้");
+        }
+      }
 
-    function handleEnter(e) { if (e.key === 'Enter') sendPrivateMessage(); }
-    
-    function scrollToBottom() {
-        const container = document.getElementById('chatMessages');
+      function handleEnter(e) {
+        if (e.key === "Enter") sendPrivateMessage();
+      }
+
+      function scrollToBottom() {
+        const container = document.getElementById("chatMessages");
         container.scrollTop = container.scrollHeight;
-    }
-</script>
-
-</body>
+      }
+    </script>
+  </body>
 </html>
