@@ -521,7 +521,7 @@ app.get('/api/users/:userId/courses', (req, res) => {
 // ==========================================
 const PORT = 3000;
 app.listen(PORT, () => {
-    console.log(`✅ Server running on http://localhost:${PORT}`);
+    console.log(`✅ Server running on http://localhost:${PORT} or u can click here http://localhost:3000/main.html`);
     
     // ✅ เช็คและสร้างไฟล์ที่จำเป็นอัตโนมัติ
     [DB_FILE, STUDY_POSTS_FILE, CHAT_FILE, NOTIFICATIONS_FILE, REGISTRATIONS_FILE, FOLLOWS_FILE, PRIVATE_CHAT_FILE].forEach(file => {
