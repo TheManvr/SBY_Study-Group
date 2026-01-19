@@ -516,10 +516,22 @@ app.get('/api/users/:userId/courses', (req, res) => {
     }
 });
 
+// ... โค้ดส่วนอื่นๆ ด้านบน ...
+
+// ✅ สำคัญมาก: บอก Server ว่าถ้าเข้าหน้าแรก (/) ให้ส่งไฟล์ main.html ไปแสดง
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'main.html'));
+});
+
+// ✅ เพิ่มเผื่อไว้: ถ้าเข้า /login ก็ให้ส่ง login.html (เผื่ออนาคต)
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'login.html'));
+});
+
 // ==========================================
 // Start Server
 // ==========================================
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`✅ Server running on http://localhost:${PORT} or u can click here http://localhost:3000/main.html`);
     

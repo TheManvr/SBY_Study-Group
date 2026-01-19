@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>รายละเอียดโพสต์ - Study Group</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
@@ -101,23 +101,95 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Chat Styles (ย่อส่วน) */
+        /* --- UPDATED CHAT UI (Consistent with Tutor Page) --- */
         .chat-toggle-btn { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #fa4299; color: white; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; z-index: 9999; transition: transform 0.3s; }
         .chat-toggle-btn:hover { transform: scale(1.1); }
-        .chat-box { position: fixed; bottom: 90px; right: 20px; width: 320px; height: 450px; background: white; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.15); display: none; flex-direction: column; overflow: hidden; z-index: 9999; border: 1px solid #eee; }
-        .chat-header { background: #fa4299; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; }
-        .msg-row { display: flex; align-items: flex-end; gap: 8px; }
-        .msg-row.me { flex-direction: row-reverse; }
-        .msg-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; }
-        .msg-bubble { max-width: 70%; padding: 8px 12px; border-radius: 15px; font-size: 14px; word-wrap: break-word; }
-        .msg-row.other .msg-bubble { background: #e4e6eb; color: #333; border-bottom-left-radius: 2px; }
-        .msg-row.me .msg-bubble { background: #fa4299; color: white; border-bottom-right-radius: 2px; }
-        .msg-name { font-size: 10px; color: #888; margin-bottom: 2px; }
-        .msg-row.me .msg-name { text-align: right; }
-        .chat-input-area { padding: 10px; border-top: 1px solid #eee; background: white; display: flex; gap: 5px; }
-        .chat-input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 8px 15px; outline: none; }
-        .chat-send-btn { background: #fa4299; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        
+        .chat-box { 
+            position: fixed; bottom: 90px; right: 20px; 
+            width: 360px; height: 500px; 
+            background: white; border-radius: 16px; 
+            box-shadow: 0 5px 40px rgba(0,0,0,0.15); 
+            display: none; flex-direction: column; overflow: hidden; 
+            z-index: 9999; border: 1px solid #eee;
+        }
+        
+        /* Chat Header */
+        .chat-header { 
+            background: #fa4299; color: white; padding: 15px; 
+            font-weight: bold; display: flex; justify-content: space-between; 
+            align-items: center; height: 60px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .chat-header-user { display: flex; align-items: center; gap: 10px; }
+        .chat-header-avatar { width: 32px; height: 32px; border-radius: 50%; background: white; border: 2px solid white; object-fit: cover; }
+        .chat-back-btn { cursor: pointer; font-size: 18px; margin-right: 10px; display: none; }
+        .chat-close { cursor: pointer; font-size: 20px; opacity: 0.8; }
+        .chat-close:hover { opacity: 1; }
+
+        /* Views */
+        .view-section { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* Inbox View */
+        .inbox-list { flex: 1; overflow-y: auto; }
+        .inbox-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f5f5f5; cursor: pointer; transition: 0.2s; }
+        .inbox-item:hover { background: #fff0f5; }
+        .inbox-avatar { width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; object-fit: cover; border: 1px solid #eee; }
+        .inbox-info { flex: 1; min-width: 0; }
+        .inbox-name { font-weight: 600; font-size: 14px; color: #333; margin-bottom: 3px; }
+        .inbox-last-msg { font-size: 12px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Messages View */
+        .chat-messages { 
+            flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; 
+            display: flex; flex-direction: column; gap: 10px; 
+        }
+        
+        .msg-row { display: flex; align-items: flex-end; width: 100%; margin-bottom: 5px; }
+        .msg-row.me { justify-content: flex-end; }
+        .msg-row.other { justify-content: flex-start; }
+        
+        /* --- จุดที่แก้ไขหลัก (เหมือน Tutor.html) --- */
+        .msg-row > div {
+            max-width: 75%; 
+            display: flex;
+            flex-direction: column;
+        }
+        .msg-row.me > div { align-items: flex-end; }
+        .msg-row.other > div { align-items: flex-start; }
+        
+        .msg-avatar { 
+            width: 28px; height: 28px; border-radius: 50%; object-fit: cover; 
+            margin: 0 8px; flex-shrink: 0; border: 1px solid #eee; 
+        }
+        
+        .msg-bubble { 
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.5;
+            position: relative;
+            
+            /* ✅ แก้ปัญหาตัวอักษรตกบรรทัด */
+            word-wrap: break-word;
+            word-break: break-word; 
+            overflow-wrap: anywhere; 
+            white-space: pre-wrap; 
+            max-width: 100%;
+        }
+        
+        .msg-row.other .msg-bubble { background: #e4e6eb; color: #333; border-bottom-left-radius: 4px; }
+        .msg-row.me .msg-bubble { background: #fa4299; color: white; border-bottom-right-radius: 4px; box-shadow: 0 2px 5px rgba(250, 66, 153, 0.2); }
+        
+        .chat-input-area { padding: 12px; border-top: 1px solid #eee; background: white; display: flex; gap: 8px; align-items: center; }
+        .chat-input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 10px 15px; outline: none; background: #f0f2f5; font-size: 14px; }
+        .chat-input:focus { border-color: #fa4299; background: white; }
+        .chat-send-btn { background: transparent; color: #fa4299; border: none; font-size: 20px; cursor: pointer; padding: 5px; transition: 0.2s; }
+        .chat-send-btn:hover { transform: scale(1.1); }
+        
+        /* ลิ้งก์ในแชท */
+        .msg-bubble a { color: inherit; font-weight: bold; text-decoration: underline; }
+        .msg-row.other .msg-bubble a { color: #007bff; }
+        .msg-row.me .msg-bubble a { color: #fff; }
     </style>
 </head>
 <body>
@@ -153,17 +225,28 @@
     <div class="chat-toggle-btn" onclick="toggleChat()">
         <i class="fas fa-comment-dots"></i>
     </div>
+    
     <div class="chat-box" id="chatBox">
         <div class="chat-header">
-            <span><i class="fas fa-comments"></i> Community Chat</span>
-            <span class="chat-close" onclick="toggleChat()" style="cursor:pointer;">×</span>
+            <div class="chat-header-user">
+                <i class="fas fa-arrow-left chat-back-btn" id="chatBackBtn" onclick="backToInbox()"></i>
+                <span id="chatTitle">ข้อความ</span>
+            </div>
+            <span class="chat-close" onclick="toggleChat()">×</span>
         </div>
-        <div class="chat-messages" id="chatMessages">
-            <div style="text-align:center; color:#999; margin-top:20px;">กำลังโหลด...</div>
+
+        <div class="view-section" id="inboxView">
+            <div class="inbox-list" id="inboxList">
+                <div style="text-align:center; padding:20px; color:#999;">กำลังโหลด...</div>
+            </div>
         </div>
-        <div class="chat-input-area">
-            <input type="text" id="chatInput" class="chat-input" placeholder="พิมพ์ข้อความ..." onkeypress="handleEnter(event)">
-            <button class="chat-send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+
+        <div class="view-section" id="chatView" style="display:none;">
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" class="chat-input" placeholder="พิมพ์ข้อความ..." onkeypress="handleEnter(event)">
+                <button class="chat-send-btn" onclick="sendPrivateMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
         </div>
     </div>
 
@@ -179,8 +262,17 @@
 
             if(currentUser) {
                 loadNotifications();
-                setInterval(loadNotifications, 3000); // Poll notifications
+                setInterval(loadNotifications, 5000); 
             }
+
+            // Click outside to close notifications
+            window.addEventListener('click', (e) => {
+                const notiContainer = document.querySelector('.noti-icon-container');
+                if (notiContainer && !notiContainer.contains(e.target)) {
+                    const dropdown = document.getElementById('notiDropdown');
+                    if(dropdown) dropdown.classList.remove('active');
+                }
+            });
         });
 
         // --- Navbar & Notification ---
@@ -194,13 +286,16 @@
                         <i class="fas fa-bell noti-icon"></i>
                         <span class="noti-badge" id="notiCount">0</span>
                         <div class="noti-dropdown" id="notiDropdown">
-                            <div class="noti-header"><span>การแจ้งเตือน</span></div>
+                            <div class="noti-header">
+                                <span>การแจ้งเตือน</span>
+                                <span style="cursor:pointer; font-size:12px;" onclick="markAllRead()">อ่านทั้งหมด</span>
+                            </div>
                             <div class="noti-content" id="notiList"><div class="no-noti">ไม่มีการแจ้งเตือน</div></div>
                         </div>
                     </div>
 
                     <a href="profile.html" style="text-decoration:none; display:flex; align-items:center; gap:8px; color:#333;">
-                        <img src="${currentUser.avatar || 'https://ui-avatars.com/api/?name=' + currentUser.name}" style="width:40px; height:40px; border-radius:50%; border:2px solid #fa4299;">
+                        <img src="${currentUser.avatar || 'https://via.placeholder.com/40'}" style="width:40px; height:40px; border-radius:50%; border:2px solid #fa4299; object-fit:cover;">
                         <span style="font-weight:600;">${currentUser.name}</span>
                     </a>
                     <a href="#" onclick="logout()" style="color:#fa4299; margin-left:5px;"><i class="fas fa-sign-out-alt"></i></a>
@@ -255,6 +350,27 @@
                     </div>
                 `).join('');
             }
+        }
+
+        async function markAllRead() {
+            const badge = document.getElementById('notiCount');
+            if (badge) badge.style.display = 'none';
+            const unreadItems = document.querySelectorAll('.noti-item.unread');
+            unreadItems.forEach(item => {
+                item.classList.remove('unread');
+                item.style.backgroundColor = 'white';
+                item.style.borderLeft = 'none';
+            });
+
+            if (!currentUser) return;
+
+            try {
+                await fetch(`${BASE_URL}/api/notifications/mark-read`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: currentUser.id })
+                });
+            } catch (err) {}
         }
 
         // --- Post Detail Logic ---
@@ -320,11 +436,10 @@
                 buttonStyle = 'background:#ccc; cursor:default; box-shadow:none;';
                 buttonAction = '';
             } else if (isRegistered) { 
-                // 🔥 ปรับปรุงตรงนี้: ถ้าลงทะเบียนแล้ว ให้เป็นปุ่ม "ยกเลิก" (สีแดง)
                 buttonText = '<i class="fas fa-times-circle"></i> ยกเลิกการลงทะเบียน';
-                buttonState = ''; // ไม่ disabled แล้ว เพื่อให้กดได้
-                buttonStyle = 'background: var(--red-danger); box-shadow: 0 5px 20px rgba(220, 53, 69, 0.3);'; // สีแดง
-                buttonAction = `onclick="handleCancelRegistration('${post.id}')"`; // เรียกฟังก์ชันยกเลิก
+                buttonState = ''; 
+                buttonStyle = 'background: var(--red-danger); box-shadow: 0 5px 20px rgba(220, 53, 69, 0.3);'; 
+                buttonAction = `onclick="handleCancelRegistration('${post.id}')"`; 
             }
 
             contentArea.innerHTML = `
@@ -419,14 +534,13 @@
             }
         }
 
-        // --- 🔥 ฟังก์ชันยกเลิกการลงทะเบียน (ใหม่) ---
         async function handleCancelRegistration(targetPostId) {
             const confirmResult = await Swal.fire({
                 title: 'ยกเลิกการลงทะเบียน?',
                 text: "คุณแน่ใจหรือไม่ที่จะออกจากคลาสเรียนนี้?",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#dc3545', // สีแดง
+                confirmButtonColor: '#dc3545',
                 cancelButtonColor: '#6c757d',
                 confirmButtonText: 'ใช่, ยกเลิกเลย',
                 cancelButtonText: 'ไม่'
@@ -438,7 +552,6 @@
                 btn.innerText = 'กำลังยกเลิก...';
 
                 try {
-                    // ส่งคำสั่ง DELETE ไปที่ Server
                     const res = await fetch(`${BASE_URL}/api/cancel-registration`, {
                         method: 'DELETE',
                         headers: { 'Content-Type': 'application/json' },
@@ -450,7 +563,7 @@
 
                     if (res.ok) {
                         await Swal.fire('เรียบร้อย', 'ยกเลิกการลงทะเบียนแล้ว', 'success');
-                        loadPostDetail(); // โหลดหน้าใหม่เพื่อให้ปุ่มกลับมาเป็น "ลงทะเบียน"
+                        loadPostDetail();
                     } else {
                         throw new Error('ไม่สามารถยกเลิกได้');
                     }
@@ -484,84 +597,154 @@
             });
         }
 
-        // --- Chat System ---
-        const CHAT_BASE_URL = 'http://localhost:3000'; 
+        // ===============================================
+        // 💬 PRIVATE CHAT LOGIC (Same as Tutor.html)
+        // ===============================================
         let isChatOpen = false;
         let chatInterval = null;
+        let currentChatPartner = null; 
 
         function toggleChat() {
             const box = document.getElementById('chatBox');
+            if (!currentUser) {
+                Swal.fire('แจ้งเตือน', 'กรุณาเข้าสู่ระบบก่อนใช้งานแชท', 'warning');
+                return;
+            }
+
             isChatOpen = !isChatOpen;
             box.style.display = isChatOpen ? 'flex' : 'none';
+
             if (isChatOpen) {
-                loadMessages(); 
-                chatInterval = setInterval(loadMessages, 3000); 
-                scrollToBottom();
+                backToInbox();
+                chatInterval = setInterval(refreshChat, 3000); 
             } else {
                 clearInterval(chatInterval); 
             }
         }
 
-        async function loadMessages() {
+        function refreshChat() {
+            if (!isChatOpen) return;
+            if (currentChatPartner) {
+                loadPrivateMessages(); 
+            } else {
+                loadInbox(); 
+            }
+        }
+
+        async function loadInbox() {
+            const inboxList = document.getElementById('inboxList');
             try {
-                const res = await fetch(`${CHAT_BASE_URL}/api/chat`);
-                if (!res.ok) return; 
+                const res = await fetch(`${BASE_URL}/api/chat-inbox/${currentUser.id}`);
+                const data = await res.json();
+
+                if (data.length === 0) {
+                    inboxList.innerHTML = `
+                        <div style="text-align:center; padding:40px; color:#aaa;">
+                            <i class="far fa-paper-plane" style="font-size:30px; margin-bottom:10px;"></i><br>
+                            ยังไม่มีข้อความ<br>
+                            <small>เลือก "ทักแชท" จากหน้ารายชื่อ</small>
+                        </div>`;
+                    return;
+                }
+
+                inboxList.innerHTML = data.map(chat => `
+                    <div class="inbox-item" onclick='openChat(${JSON.stringify(chat)})'>
+                        <img src="${chat.partnerAvatar || 'https://via.placeholder.com/40'}" class="inbox-avatar">
+                        <div class="inbox-info">
+                            <div class="inbox-name">${chat.partnerName}</div>
+                            <div class="inbox-last-msg">${chat.lastMessage}</div>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) { console.error("Load inbox error", error); }
+        }
+
+        function openChat(partner) {
+            const pId = partner.partnerId || partner.id;
+            const pName = partner.partnerName || partner.name;
+            const pAvatar = partner.partnerAvatar || partner.avatar || 'https://via.placeholder.com/30';
+
+            currentChatPartner = { partnerId: pId, partnerName: pName, partnerAvatar: pAvatar };
+            
+            document.getElementById('inboxView').style.display = 'none';
+            document.getElementById('chatView').style.display = 'flex';
+            document.getElementById('chatBackBtn').style.display = 'block';
+            document.getElementById('chatTitle').innerHTML = `
+                <img src="${pAvatar}" style="width:25px; height:25px; border-radius:50%; vertical-align:middle; object-fit:cover;"> ${pName}`;
+
+            loadPrivateMessages();
+            setTimeout(scrollToBottom, 200);
+        }
+
+        function backToInbox() {
+            currentChatPartner = null;
+            document.getElementById('inboxView').style.display = 'flex';
+            document.getElementById('chatView').style.display = 'none';
+            document.getElementById('chatBackBtn').style.display = 'none';
+            document.getElementById('chatTitle').textContent = 'ข้อความ';
+            loadInbox();
+        }
+
+        async function loadPrivateMessages() {
+            if (!currentChatPartner) return;
+            const container = document.getElementById('chatMessages');
+
+            try {
+                const res = await fetch(`${BASE_URL}/api/private-chat/${currentUser.id}/${currentChatPartner.partnerId}`);
                 const messages = await res.json();
-                renderMessages(messages);
+                
+                const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+
+                container.innerHTML = messages.map(msg => {
+                    const isMe = String(msg.fromId) === String(currentUser.id);
+                    return `
+                        <div class="msg-row ${isMe ? 'me' : 'other'}">
+                            ${!isMe ? `<img src="${msg.senderAvatar || 'https://via.placeholder.com/30'}" class="msg-avatar">` : ''}
+                            <div>
+                                <div class="msg-bubble">${msg.message}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                if (isAtBottom) scrollToBottom();
+                
             } catch (err) { console.error("Chat Error:", err); }
         }
 
-        function renderMessages(messages) {
-            const container = document.getElementById('chatMessages');
-            const myName = currentUser ? currentUser.name : "";
-            const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
-
-            container.innerHTML = messages.map(msg => {
-                const isMe = msg.sender === myName;
-                return `
-                    <div class="msg-row ${isMe ? 'me' : 'other'}">
-                        ${!isMe ? `<img src="${msg.avatar || 'https://via.placeholder.com/30'}" class="msg-avatar">` : ''}
-                        <div>
-                            <div class="msg-name">${msg.sender}</div>
-                            <div class="msg-bubble">${msg.text}</div>
-                        </div>
-                        ${isMe ? `<img src="${msg.avatar || 'https://via.placeholder.com/30'}" class="msg-avatar">` : ''}
-                    </div>
-                `;
-            }).join('');
-
-            if (isAtBottom) scrollToBottom();
-        }
-
-        async function sendMessage() {
+        async function sendPrivateMessage() {
+            if (!currentChatPartner) return;
+            
             const input = document.getElementById('chatInput');
             const text = input.value.trim();
-            if (!currentUser) {
-                Swal.fire('เข้าสู่ระบบก่อน', 'กรุณาเข้าสู่ระบบเพื่อใช้งานแชท', 'warning');
-                return;
-            }
             if (!text) return;
-
+            
             try {
-                await fetch(`${CHAT_BASE_URL}/api/chat`, {
+                await fetch(`${BASE_URL}/api/private-chat`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        sender: currentUser.name,
-                        avatar: currentUser.avatar,
-                        text: text
+                        fromId: currentUser.id,
+                        toId: currentChatPartner.partnerId,
+                        message: text,
+                        senderName: currentUser.username || currentUser.name,
+                        senderAvatar: currentUser.avatar
                     })
                 });
                 input.value = ''; 
-                loadMessages(); 
+                loadPrivateMessages(); 
+                scrollToBottom();
             } catch (e) { console.log("ส่งข้อความไม่ได้"); }
         }
 
-        function handleEnter(e) { if (e.key === 'Enter') sendMessage(); }
+        function handleEnter(e) { if (e.key === 'Enter') sendPrivateMessage(); }
+        
         function scrollToBottom() {
             const container = document.getElementById('chatMessages');
             container.scrollTop = container.scrollHeight;
         }
+
     </script>
 </body>
 </html>
