@@ -27,7 +27,7 @@
             display: flex; flex-direction: column;
         }
 
-        /* --- Navbar (Copy Style from Dashboard) --- */
+        /* --- Navbar --- */
         nav {
             height: 80px; background: #fff; display: flex; justify-content: space-between; align-items: center;
             padding: 0 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
@@ -43,7 +43,7 @@
         .btn-login:hover { background: #333; color: white !important; }
         @media (max-width: 1000px) { .nav-menu { display: none; } }
 
-        /* --- Notification Styles (เหมือน Dashboard เป๊ะๆ) --- */
+        /* --- Notification Styles --- */
         .noti-icon-container { position: relative; cursor: pointer; margin-right: 15px; }
         .noti-icon { font-size: 24px; color: #555; transition: 0.3s; }
         .noti-icon:hover { color: #ff2d78; transform: rotate(15deg); }
@@ -144,18 +144,94 @@
         .f-name { font-weight: 600; color: #333; font-size: 15px; }
         .f-role { font-size: 12px; color: #888; background: #eee; padding: 2px 8px; border-radius: 10px; }
 
-        /* Chat Box */
-        .chat-box { position: fixed; bottom: 90px; right: 20px; width: 320px; height: 450px; background: white; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.15); display: none; flex-direction: column; overflow: hidden; z-index: 9999; border: 1px solid #eee; }
-        .chat-header { background: #fa4299; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; }
-        .chat-input-area { padding: 10px; border-top: 1px solid #eee; background: white; display: flex; gap: 5px; }
-        .chat-input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 8px 15px; outline: none; }
-        .chat-send-btn { background: #fa4299; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .msg-row { display: flex; align-items: flex-end; gap: 8px; }
-        .msg-row.me { flex-direction: row-reverse; }
-        .msg-bubble { max-width: 70%; padding: 8px 12px; border-radius: 15px; font-size: 14px; word-wrap: break-word; }
-        .msg-row.other .msg-bubble { background: #e4e6eb; color: #333; border-bottom-left-radius: 2px; }
-        .msg-row.me .msg-bubble { background: #fa4299; color: white; border-bottom-right-radius: 2px; }
+        /* --- UPDATED CHAT UI (Consistent with Other Pages) --- */
+        .chat-toggle-btn { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #fa4299; color: white; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; z-index: 9999; transition: transform 0.3s; }
+        .chat-toggle-btn:hover { transform: scale(1.1); }
+        
+        .chat-box { 
+            position: fixed; bottom: 90px; right: 20px; 
+            width: 360px; height: 500px; 
+            background: white; border-radius: 16px; 
+            box-shadow: 0 5px 40px rgba(0,0,0,0.15); 
+            display: none; flex-direction: column; overflow: hidden; 
+            z-index: 9999; border: 1px solid #eee;
+        }
+        
+        /* Chat Header */
+        .chat-header { 
+            background: #fa4299; color: white; padding: 15px; 
+            font-weight: bold; display: flex; justify-content: space-between; 
+            align-items: center; height: 60px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .chat-header-user { display: flex; align-items: center; gap: 10px; }
+        .chat-header-avatar { width: 32px; height: 32px; border-radius: 50%; background: white; border: 2px solid white; object-fit: cover; }
+        .chat-back-btn { cursor: pointer; font-size: 18px; margin-right: 10px; display: none; }
+        .chat-close { cursor: pointer; font-size: 20px; opacity: 0.8; }
+        .chat-close:hover { opacity: 1; }
+
+        /* Views */
+        .view-section { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* Inbox View */
+        .inbox-list { flex: 1; overflow-y: auto; }
+        .inbox-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f5f5f5; cursor: pointer; transition: 0.2s; }
+        .inbox-item:hover { background: #fff0f5; }
+        .inbox-avatar { width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; object-fit: cover; border: 1px solid #eee; }
+        .inbox-info { flex: 1; min-width: 0; }
+        .inbox-name { font-weight: 600; font-size: 14px; color: #333; margin-bottom: 3px; }
+        .inbox-last-msg { font-size: 12px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Messages View */
+        .chat-messages { 
+            flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; 
+            display: flex; flex-direction: column; gap: 10px; 
+        }
+        
+        .msg-row { display: flex; align-items: flex-end; width: 100%; margin-bottom: 5px; }
+        .msg-row.me { justify-content: flex-end; }
+        .msg-row.other { justify-content: flex-start; }
+        
+        .msg-row > div {
+            max-width: 75%; 
+            display: flex;
+            flex-direction: column;
+        }
+        .msg-row.me > div { align-items: flex-end; }
+        .msg-row.other > div { align-items: flex-start; }
+        
+        .msg-avatar { 
+            width: 28px; height: 28px; border-radius: 50%; object-fit: cover; 
+            margin: 0 8px; flex-shrink: 0; border: 1px solid #eee; 
+        }
+        
+        .msg-bubble { 
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.5;
+            position: relative;
+            
+            /* ✅ แก้ปัญหาตัวอักษรตกบรรทัด */
+            word-wrap: break-word;
+            word-break: break-word; 
+            overflow-wrap: anywhere; 
+            white-space: pre-wrap; 
+            max-width: 100%;
+        }
+        
+        .msg-row.other .msg-bubble { background: #e4e6eb; color: #333; border-bottom-left-radius: 4px; }
+        .msg-row.me .msg-bubble { background: #fa4299; color: white; border-bottom-right-radius: 4px; box-shadow: 0 2px 5px rgba(250, 66, 153, 0.2); }
+        
+        .chat-input-area { padding: 12px; border-top: 1px solid #eee; background: white; display: flex; gap: 8px; align-items: center; }
+        .chat-input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 10px 15px; outline: none; background: #f0f2f5; font-size: 14px; }
+        .chat-input:focus { border-color: #fa4299; background: white; }
+        .chat-send-btn { background: transparent; color: #fa4299; border: none; font-size: 20px; cursor: pointer; padding: 5px; transition: 0.2s; }
+        .chat-send-btn:hover { transform: scale(1.1); }
+        
+        /* Links in chat */
+        .msg-bubble a { color: inherit; font-weight: bold; text-decoration: underline; }
+        .msg-row.other .msg-bubble a { color: #007bff; }
+        .msg-row.me .msg-bubble a { color: #fff; }
 
     </style>
 </head>
@@ -216,7 +292,7 @@
                     <button id="btn-follow" class="btn-action btn-follow" onclick="handleFollow()">
                         <i class="fas fa-plus"></i> ติดตาม
                     </button>
-                    <button class="btn-action btn-chat" onclick="openChat()">
+                    <button class="btn-action btn-chat" onclick="openProfileChat()">
                         <i class="fas fa-comment-dots"></i> Chat
                     </button>
                 </div>
@@ -269,17 +345,31 @@
         </div>
     </div>
 
+    <div class="chat-toggle-btn" onclick="toggleChat()">
+        <i class="fas fa-comment-dots"></i>
+    </div>
+    
     <div class="chat-box" id="chatBox">
         <div class="chat-header">
-            <span id="chat-header-title"><i class="fas fa-comments"></i> Chat</span>
-            <span style="cursor:pointer;" onclick="document.getElementById('chatBox').style.display='none'">×</span>
+            <div class="chat-header-user">
+                <i class="fas fa-arrow-left chat-back-btn" id="chatBackBtn" onclick="backToInbox()"></i>
+                <span id="chatTitle">ข้อความ</span>
+            </div>
+            <span class="chat-close" onclick="toggleChat()">×</span>
         </div>
-        <div class="chat-messages" id="chatMessages">
-            <div style="text-align:center; color:#999; margin-top:20px;">เริ่มการสนทนา...</div>
+
+        <div class="view-section" id="inboxView">
+            <div class="inbox-list" id="inboxList">
+                <div style="text-align:center; padding:20px; color:#999;">กำลังโหลด...</div>
+            </div>
         </div>
-        <div class="chat-input-area">
-            <input type="text" id="chatInput" class="chat-input" placeholder="พิมพ์ข้อความ..." onkeypress="handleEnter(event)">
-            <button class="chat-send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+
+        <div class="view-section" id="chatView" style="display:none;">
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" class="chat-input" placeholder="พิมพ์ข้อความ..." onkeypress="handleEnter(event)">
+                <button class="chat-send-btn" onclick="sendPrivateMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
         </div>
     </div>
 
@@ -324,12 +414,11 @@
             checkFollowStatus();
             document.getElementById('action-buttons-container').style.display = 'flex';
             
-            // 🔥 เรียกใช้ Notification แบบใหม่
             loadNotifications();
             setInterval(loadNotifications, 5000);
         }
 
-        // คลิกที่อื่นเพื่อปิด Dropdown (Logic แบบ Dashboard)
+        // คลิกที่อื่นเพื่อปิด Dropdown
         window.addEventListener('click', (e) => {
             const notiContainer = document.getElementById('notiContainer');
             if (notiContainer && !notiContainer.contains(e.target)) {
@@ -505,32 +594,174 @@
         } catch (e) { container.innerHTML = 'Error loading list'; }
     }
 
-    // --- 4. Chat System ---
-    function openChat() {
-        if(!currentUser) return Swal.fire('กรุณาเข้าสู่ระบบก่อน');
-        document.getElementById('chatBox').style.display = 'flex';
-        document.getElementById('chat-header-title').innerText = `Chat with ${targetUser.name}`;
+    // ===============================================
+    // 💬 4. PRIVATE CHAT SYSTEM (Integrated)
+    // ===============================================
+    let isChatOpen = false;
+    let chatInterval = null;
+    let currentChatPartner = null; 
+
+    // ✅ ฟังก์ชันที่ปุ่ม Chat ในหน้า Profile เรียกใช้
+    function openProfileChat() {
+        if (!currentUser) return Swal.fire('กรุณาเข้าสู่ระบบ', '', 'warning');
+        if (!targetUser) return;
+
+        const partnerObj = {
+            partnerId: targetUser.id,
+            partnerName: targetUser.name,
+            partnerAvatar: targetUser.avatar
+        };
+        
+        // ถ้าแชทปิดอยู่ ให้เปิด
+        if (!isChatOpen) {
+            toggleChat();
+        }
+        // เปิดห้องแชทของคนนี้เลย
+        openChat(partnerObj);
     }
 
-    function sendMessage() {
+    function toggleChat() {
+        const box = document.getElementById('chatBox');
+        if (!currentUser) {
+            Swal.fire('แจ้งเตือน', 'กรุณาเข้าสู่ระบบก่อนใช้งานแชท', 'warning');
+            return;
+        }
+
+        isChatOpen = !isChatOpen;
+        box.style.display = isChatOpen ? 'flex' : 'none';
+
+        if (isChatOpen) {
+            backToInbox(); // Default inbox
+            chatInterval = setInterval(refreshChat, 3000); 
+        } else {
+            clearInterval(chatInterval); 
+        }
+    }
+
+    function refreshChat() {
+        if (!isChatOpen) return;
+        if (currentChatPartner) {
+            loadPrivateMessages(); 
+        } else {
+            loadInbox(); 
+        }
+    }
+
+    async function loadInbox() {
+        const inboxList = document.getElementById('inboxList');
+        try {
+            const res = await fetch(`${BASE_API}/api/chat-inbox/${currentUser.id}`);
+            const data = await res.json();
+
+            if (data.length === 0) {
+                inboxList.innerHTML = `
+                    <div style="text-align:center; padding:40px; color:#aaa;">
+                        <i class="far fa-paper-plane" style="font-size:30px; margin-bottom:10px;"></i><br>
+                        ยังไม่มีข้อความ<br>
+                        <small>เลือก "ทักแชท" จากหน้า Profile หรือรายชื่อ</small>
+                    </div>`;
+                return;
+            }
+
+            inboxList.innerHTML = data.map(chat => `
+                <div class="inbox-item" onclick='openChat(${JSON.stringify(chat)})'>
+                    <img src="${chat.partnerAvatar || 'https://via.placeholder.com/40'}" class="inbox-avatar">
+                    <div class="inbox-info">
+                        <div class="inbox-name">${chat.partnerName}</div>
+                        <div class="inbox-last-msg">${chat.lastMessage}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+        } catch (error) { console.error("Load inbox error", error); }
+    }
+
+    function openChat(partner) {
+        const pId = partner.partnerId || partner.id;
+        const pName = partner.partnerName || partner.name;
+        const pAvatar = partner.partnerAvatar || partner.avatar || 'https://via.placeholder.com/30';
+
+        currentChatPartner = { partnerId: pId, partnerName: pName, partnerAvatar: pAvatar };
+        
+        document.getElementById('inboxView').style.display = 'none';
+        document.getElementById('chatView').style.display = 'flex';
+        document.getElementById('chatBackBtn').style.display = 'block';
+        document.getElementById('chatTitle').innerHTML = `
+            <img src="${pAvatar}" style="width:25px; height:25px; border-radius:50%; vertical-align:middle; object-fit:cover;"> ${pName}`;
+
+        loadPrivateMessages();
+        setTimeout(scrollToBottom, 200);
+    }
+
+    function backToInbox() {
+        currentChatPartner = null;
+        document.getElementById('inboxView').style.display = 'flex';
+        document.getElementById('chatView').style.display = 'none';
+        document.getElementById('chatBackBtn').style.display = 'none';
+        document.getElementById('chatTitle').textContent = 'ข้อความ';
+        loadInbox();
+    }
+
+    async function loadPrivateMessages() {
+        if (!currentChatPartner) return;
+        const container = document.getElementById('chatMessages');
+
+        try {
+            const res = await fetch(`${BASE_API}/api/private-chat/${currentUser.id}/${currentChatPartner.partnerId}`);
+            const messages = await res.json();
+            
+            const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+
+            container.innerHTML = messages.map(msg => {
+                const isMe = String(msg.fromId) === String(currentUser.id);
+                return `
+                    <div class="msg-row ${isMe ? 'me' : 'other'}">
+                        ${!isMe ? `<img src="${msg.senderAvatar || 'https://via.placeholder.com/30'}" class="msg-avatar">` : ''}
+                        <div>
+                            <div class="msg-bubble">${msg.message}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            if (isAtBottom) scrollToBottom();
+            
+        } catch (err) { console.error("Chat Error:", err); }
+    }
+
+    async function sendPrivateMessage() {
+        if (!currentChatPartner) return;
+        
         const input = document.getElementById('chatInput');
         const text = input.value.trim();
-        if(!text) return;
-
-        const chatArea = document.getElementById('chatMessages');
-        chatArea.innerHTML += `<div class="msg-row me"><div class="msg-bubble">${text}</div></div>`;
-        input.value = '';
-        chatArea.scrollTop = chatArea.scrollHeight;
-
-        setTimeout(() => {
-            chatArea.innerHTML += `<div class="msg-row other"><div class="msg-bubble">ระบบแชทส่วนตัวกำลังพัฒนาครับ (Demo)</div></div>`;
-            chatArea.scrollTop = chatArea.scrollHeight;
-        }, 800);
+        if (!text) return;
+        
+        try {
+            await fetch(`${BASE_API}/api/private-chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fromId: currentUser.id,
+                    toId: currentChatPartner.partnerId,
+                    message: text,
+                    senderName: currentUser.username || currentUser.name,
+                    senderAvatar: currentUser.avatar
+                })
+            });
+            input.value = ''; 
+            loadPrivateMessages(); 
+            scrollToBottom();
+        } catch (e) { console.log("ส่งข้อความไม่ได้"); }
     }
-    function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
 
+    function handleEnter(e) { if (e.key === 'Enter') sendPrivateMessage(); }
+    
+    function scrollToBottom() {
+        const container = document.getElementById('chatMessages');
+        container.scrollTop = container.scrollHeight;
+    }
 
-    // --- 5. Global & Navbar (Copy Logic from Dashboard) ---
+    // --- 5. Global & Navbar ---
     function checkLoginStatus() {
         const userJson = localStorage.getItem('currentUser');
         if (userJson) {
@@ -559,23 +790,21 @@
         });
     }
 
-    // --- 🔥 Updated Notification Logic (Copy form Dashboard) ---
+    // --- Notification (Common) ---
     function toggleNotification(event) {
         if(event) event.stopPropagation();
         const dropdown = document.getElementById('notiDropdown');
-        if(dropdown) dropdown.classList.toggle('active');
+        dropdown.classList.toggle('active');
     }
 
     async function loadNotifications() {
-        const userJson = localStorage.getItem('currentUser');
-        if (!userJson) return;
-        const user = JSON.parse(userJson);
+        if (!currentUser) return;
         const list = document.getElementById('notiList');
         const badge = document.getElementById('notiCount');
 
         try {
             if(!list) return;
-            const res = await fetch(`${BASE_API}/api/notifications?userId=${user.id}`);
+            const res = await fetch(`${BASE_API}/api/notifications?userId=${currentUser.id}`);
             const notifications = await res.json();
             
             if (!Array.isArray(notifications)) return;
@@ -607,10 +836,9 @@
     }
 
     async function markAllRead() {
-        // 1. Update UI ทันที
         const badge = document.getElementById('notiCount');
         if (badge) badge.style.display = 'none';
-
+        
         const unreadItems = document.querySelectorAll('.noti-item.unread');
         unreadItems.forEach(item => {
             item.classList.remove('unread');
@@ -618,16 +846,13 @@
             item.style.borderLeft = 'none';
         });
 
-        // 2. Call API
-        const userJson = localStorage.getItem('currentUser');
-        if (!userJson) return;
-        const user = JSON.parse(userJson);
+        if (!currentUser) return;
 
         try {
             await fetch(`${BASE_API}/api/notifications/mark-read`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: user.id })
+                body: JSON.stringify({ userId: currentUser.id })
             });
         } catch (err) { console.error("เชื่อมต่อ Server ไม่ได้", err); }
     }

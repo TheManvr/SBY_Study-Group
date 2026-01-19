@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Group</title>
+    <title>Study Group - Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        /* ใส่เพิ่มใน style ครับ */
         .hidden { display: none !important; }
 
         /* --- Reset & Base --- */
@@ -26,7 +25,6 @@
             display: flex;
             flex-direction: column;
             
-            /* ✅ แก้ไข: บังคับให้มี Scrollbar เสมอ เพื่อให้หน้าไม่กระโดดเทียบกับ Main */
             overflow-y: scroll; 
         }
 
@@ -41,7 +39,6 @@
         .nav-logo img { height: 45px; display: block; }
         .nav-brand { font-size: 20px; font-weight: 700; color: #ff2d78; }
         
-        /* ✅ เมนูตรงกลาง */
         .nav-menu { 
             position: absolute; 
             left: 50%; 
@@ -120,10 +117,6 @@
         .input-group label { display: block; font-size: 14px; color: #555; margin-bottom: 5px; font-weight: 600; }
         .input-group input { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; outline: none; background: #fafafa; }
         .input-group input:focus { border-color: #ff2d78; background: #fff; }
-
-        .email-otp-group { display: flex; gap: 10px; }
-        .email-otp-group input { flex: 1; }
-        .btn-otp { padding: 0 15px; background: #333; color: white; border: none; border-radius: 10px; font-size: 13px; cursor: pointer; }
 
         .btn-submit { width: 100%; padding: 14px; background: #ff2d78; color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         .btn-submit:hover { background: #e0266a; }
@@ -213,16 +206,7 @@
 
                     <div class="input-group">
                         <label>อีเมล (Email)</label>
-                        <div class="email-otp-group">
-                            <input type="email" id="reg-email" placeholder="กรอกอีเมลของคุณ" required>
-                            <button type="button" class="btn-otp" onclick="requestOTP()">ขอ OTP</button>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>รหัสยืนยัน (OTP Code)</label>
-                        <input type="text" id="reg-otp" placeholder="กรอกรหัส 6 หลักจากอีเมล" maxlength="6" required style="letter-spacing: 2px; text-align: center; font-weight: bold;">
-                        <small style="color: #aaa; font-size: 12px;">*ต้องกดปุ่ม "ขอ OTP" ก่อน (รหัสทดสอบ: 123456)</small>
+                        <input type="email" id="reg-email" placeholder="กรอกอีเมลของคุณ" required>
                     </div>
 
                     <div class="input-group">
@@ -258,12 +242,9 @@
 
 <script>
     // ==========================================
-    // ✅ เพิ่มส่วนนี้: ตั้งค่า Server URL ให้ถูกต้อง
+    // ✅ ตั้งค่า Server URL ให้ถูกต้อง
     // ==========================================
     const BASE_URL = 'http://localhost:3000'; 
-
-    // ตัวแปร OTP จำลอง
-    let generatedOTP = null; 
 
     // --- 1. ฟังก์ชันสลับแท็บ ---
     function switchTab(tabName) {
@@ -284,19 +265,6 @@
         }
     }
 
-    // --- 2. ฟังก์ชันขอ OTP ---
-    function requestOTP() {
-        // ✅ ตรงนี้จะทำงานได้ถูกต้องแล้วเพราะแก้ HTML id เป็น reg-email แล้ว
-        const email = document.getElementById('reg-email').value;
-        if (!email) {
-            alert("กรุณากรอกอีเมลก่อนขอ OTP");
-            return;
-        }
-        generatedOTP = "123456"; 
-        alert(`ส่งรหัส OTP ไปที่ ${email} แล้ว\n(รหัสทดสอบของคุณคือ: 123456)`);
-        document.getElementById('reg-otp').focus();
-    }
-
     // --- 3. สมัครสมาชิก (เชื่อมต่อ Server) ---
     async function handleRegister(e) {
         e.preventDefault();
@@ -304,13 +272,10 @@
         const username = document.getElementById('reg-username').value;
         const pass = document.getElementById('reg-pass').value;
         const confirm = document.getElementById('reg-confirm').value;
-        const otp = document.getElementById('reg-otp').value;
         
-        if (pass !== confirm) return alert("รหัสผ่านไม่ตรงกัน");
-        if (otp !== generatedOTP) return alert("รหัส OTP ไม่ถูกต้อง (ลองกดขอ OTP ใหม่)");
+        if (pass !== confirm) return Swal.fire("แจ้งเตือน", "รหัสผ่านไม่ตรงกัน", "error");
 
         try {
-            // ✅ ใช้ BASE_URL เชื่อมต่อ
             const res = await fetch(`${BASE_URL}/api/register-user`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -318,266 +283,81 @@
                     username: username,
                     password: pass,
                     role: document.querySelector('input[name="role"]:checked').value,
-                    // ✅ ตรงนี้ก็แก้ให้ดึงจาก ID ที่ถูกต้อง
                     email: document.getElementById('reg-email').value 
                 })
             });
 
             const result = await res.json();
             if(res.ok) {
-                alert("✅ สมัครสำเร็จ! กรุณาเข้าสู่ระบบ");
-                switchTab('login'); 
+                Swal.fire({
+                    icon: 'success',
+                    title: 'สมัครสำเร็จ!',
+                    text: 'กรุณาเข้าสู่ระบบเพื่อใช้งาน'
+                }).then(() => {
+                    switchTab('login');
+                });
             } else {
-                alert("เกิดข้อผิดพลาด: " + result.error);
+                Swal.fire("เกิดข้อผิดพลาด", result.error, "error");
             }
         } catch(err) { 
             console.error(err);
-            alert("ติดต่อ Server ไม่ได้ (อย่าลืมรัน node server.js)"); 
+            Swal.fire("Error", "ติดต่อ Server ไม่ได้ (อย่าลืมรัน node server.js)", "error"); 
         }
     }
 
-    // ในไฟล์ login.html
+    // --- 4. เข้าสู่ระบบ (Login) ---
+    async function handleLogin(event) {
+        event.preventDefault(); 
 
-async function handleLogin(event) {
-    event.preventDefault(); // 1. บรรทัดนี้สำคัญมาก! กันไม่ให้หน้ารีเฟรชเอง
+        const emailInput = document.getElementById('loginEmail');
+        const passInput = document.getElementById('loginPassword');
 
-    // 2. ดึงค่าจาก ID ที่เราตั้งไว้ในจุดที่ 2
-    const emailInput = document.getElementById('loginEmail');
-    const passInput = document.getElementById('loginPassword');
-
-    if (!emailInput || !passInput) {
-        alert("ไม่พบช่องกรอกข้อมูล (กรุณาเช็ค ID ใน HTML)");
-        return;
-    }
-
-    const email = emailInput.value;
-    const password = passInput.value;
-
-    try {
-        // แสดง Loading หมุนๆ
-        Swal.fire({
-            title: 'กำลังตรวจสอบ...',
-            allowOutsideClick: false,
-            didOpen: () => Swal.showLoading()
-        });
-
-        // 3. ยิงไป Server
-        const response = await fetch('http://localhost:3000/api/login', { 
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.success) {
-            // ✅ ล็อกอินผ่าน
-            localStorage.setItem('currentUser', JSON.stringify(data.user)); 
-            
-            // แสดง Animation สำเร็จ
-            await Swal.fire({
-                icon: 'success',
-                title: 'เข้าสู่ระบบสำเร็จ!',
-                timer: 1500,
-                showConfirmButton: false
-            });
-
-            // ย้ายหน้า
-            window.location.href = 'main.html';
-
-        } else {
-            // ❌ รหัสผิด
-            Swal.fire('เข้าสู่ระบบไม่สำเร็จ', data.message || 'รหัสผ่านผิด', 'error');
-        }
-
-    } catch (error) {
-        console.error('Error:', error);
-        Swal.fire('Error', 'ติดต่อ Server ไม่ได้ (อย่าลืมเปิด node server.js)', 'error');
-    }
-}
-</script>
-
-<style>
-    /* ปุ่มเปิดแชท */
-    .chat-toggle-btn {
-        position: fixed; bottom: 20px; right: 20px;
-        width: 60px; height: 60px;
-        background: #fa4299; color: white;
-        border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        display: flex; justify-content: center; align-items: center;
-        font-size: 24px; cursor: pointer; z-index: 9999;
-        transition: transform 0.3s;
-    }
-    .chat-toggle-btn:hover { transform: scale(1.1); }
-
-    /* กล่องแชท */
-    .chat-box {
-        position: fixed; bottom: 90px; right: 20px;
-        width: 320px; height: 450px;
-        background: white; border-radius: 15px;
-        box-shadow: 0 5px 25px rgba(0,0,0,0.15);
-        display: none; 
-        flex-direction: column; overflow: hidden; z-index: 9999;
-        border: 1px solid #eee;
-    }
-
-    /* หัวข้อกล่องแชท */
-    .chat-header {
-        background: #fa4299; color: white; padding: 15px;
-        font-weight: bold; display: flex; justify-content: space-between; align-items: center;
-    }
-    .chat-close { cursor: pointer; font-size: 18px; }
-
-    /* พื้นที่แสดงข้อความ */
-    .chat-messages {
-        flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9;
-        display: flex; flex-direction: column; gap: 10px;
-    }
-
-    /* สไตล์ข้อความ */
-    .msg-row { display: flex; align-items: flex-end; gap: 8px; }
-    .msg-row.me { flex-direction: row-reverse; }
-    
-    .msg-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; }
-    
-    .msg-bubble {
-        max-width: 70%; padding: 8px 12px; border-radius: 15px; font-size: 14px; word-wrap: break-word;
-    }
-    .msg-row.other .msg-bubble { background: #e4e6eb; color: #333; border-bottom-left-radius: 2px; }
-    .msg-row.me .msg-bubble { background: #fa4299; color: white; border-bottom-right-radius: 2px; }
-    
-    .msg-name { font-size: 10px; color: #888; margin-bottom: 2px; }
-    .msg-row.me .msg-name { text-align: right; }
-
-    /* พื้นที่พิมพ์ */
-    .chat-input-area {
-        padding: 10px; border-top: 1px solid #eee; background: white;
-        display: flex; gap: 5px;
-    }
-    .chat-input {
-        flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 8px 15px; outline: none;
-    }
-    .chat-send-btn {
-        background: #fa4299; color: white; border: none; width: 35px; height: 35px;
-        border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
-    }
-</style>
-
-<div class="chat-toggle-btn" onclick="toggleChat()">
-    <i class="fas fa-comment-dots"></i>
-</div>
-
-<div class="chat-box" id="chatBox">
-    <div class="chat-header">
-        <span><i class="fas fa-comments"></i> Community Chat</span>
-        <span class="chat-close" onclick="toggleChat()">×</span>
-    </div>
-    <div class="chat-messages" id="chatMessages">
-        <div style="text-align:center; color:#999; margin-top:20px;">กำลังโหลด...</div>
-    </div>
-    <div class="chat-input-area">
-        <input type="text" id="chatInput" class="chat-input" placeholder="พิมพ์ข้อความ..." onkeypress="handleEnter(event)">
-        <button class="chat-send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
-    </div>
-</div>
-
-<script>
-    let isChatOpen = false;
-    let chatInterval = null;
-
-    function toggleChat() {
-        const box = document.getElementById('chatBox');
-        isChatOpen = !isChatOpen;
-        box.style.display = isChatOpen ? 'flex' : 'none';
-
-        if (isChatOpen) {
-            loadMessages(); // โหลดทันทีที่เปิด
-            chatInterval = setInterval(loadMessages, 3000); // โหลดใหม่ทุก 3 วินาที (Polling)
-            scrollToBottom();
-        } else {
-            clearInterval(chatInterval); // ปิดแชทแล้วหยุดโหลด จะได้ไม่หน่วงเครื่อง
-        }
-    }
-
-    async function loadMessages() {
-        try {
-            // ✅ ใช้ BASE_URL เพื่อเชื่อมต่อ Server (ดึงจาก script ด้านบน)
-            const res = await fetch(`${BASE_URL}/api/chat`);
-            if (!res.ok) return; // ถ้า Server ไม่มีแชทก็ไม่ error
-            const messages = await res.json();
-            renderMessages(messages);
-        } catch (err) {
-            console.error("Chat Error:", err);
-        }
-    }
-
-    function renderMessages(messages) {
-        const container = document.getElementById('chatMessages');
-        const userJson = localStorage.getItem("currentUser");
-        const currentUser = userJson ? JSON.parse(userJson) : null;
-        const myName = currentUser ? currentUser.name : "";
-
-        // เช็คว่า Scroll อยู่ล่างสุดไหม (เพื่อ Auto scroll)
-        const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
-
-        container.innerHTML = messages.map(msg => {
-            const isMe = msg.sender === myName;
-            return `
-                <div class="msg-row ${isMe ? 'me' : 'other'}">
-                    ${!isMe ? `<img src="${msg.avatar || 'https://via.placeholder.com/30'}" class="msg-avatar">` : ''}
-                    <div>
-                        <div class="msg-name">${msg.sender}</div>
-                        <div class="msg-bubble">${msg.text}</div>
-                    </div>
-                    ${isMe ? `<img src="${msg.avatar || 'https://via.placeholder.com/30'}" class="msg-avatar">` : ''}
-                </div>
-            `;
-        }).join('');
-
-        // ถ้า User ดูข้อความล่างสุดอยู่ ให้เลื่อนลงให้อัตโนมัติเมื่อมีข้อความใหม่
-        if (isAtBottom) scrollToBottom();
-    }
-
-    async function sendMessage() {
-        const input = document.getElementById('chatInput');
-        const text = input.value.trim();
-        const userJson = localStorage.getItem("currentUser");
-        
-        if (!userJson) {
-            alert("กรุณาเข้าสู่ระบบก่อนแชท");
+        if (!emailInput || !passInput) {
+            Swal.fire("Error", "ไม่พบช่องกรอกข้อมูล", "error");
             return;
         }
-        if (!text) return;
 
-        const user = JSON.parse(userJson);
+        const email = emailInput.value;
+        const password = passInput.value;
 
         try {
-            // ✅ ใช้ BASE_URL เชื่อมต่อ Server
-            await fetch(`${BASE_URL}/api/chat`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    sender: user.name,
-                    avatar: user.avatar,
-                    text: text
-                })
+            Swal.fire({
+                title: 'กำลังตรวจสอบ...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
             });
 
-            input.value = ''; // เคลียร์ช่องพิมพ์
-            loadMessages(); // โหลดข้อความใหม่ทันที
-        } catch (e) {
-            console.log("ส่งข้อความไม่ได้");
+            const response = await fetch(`${BASE_URL}/api/login`, { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                // ✅ ล็อกอินผ่าน
+                localStorage.setItem('currentUser', JSON.stringify(data.user)); 
+                
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'เข้าสู่ระบบสำเร็จ!',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
+                window.location.href = 'main.html';
+
+            } else {
+                Swal.fire('เข้าสู่ระบบไม่สำเร็จ', data.message || 'รหัสผ่านผิด', 'error');
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire('Error', 'ติดต่อ Server ไม่ได้ (อย่าลืมเปิด node server.js)', 'error');
         }
     }
-
-    function handleEnter(e) {
-        if (e.key === 'Enter') sendMessage();
-    }
-
-    function scrollToBottom() {
-        const container = document.getElementById('chatMessages');
-        container.scrollTop = container.scrollHeight;
-    }
 </script>
+
 </body>
 </html>

@@ -235,7 +235,7 @@
         .btn-cancel { flex: 1; background: #f0f2f5; color: #666; padding: 12px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; }
         .btn-cancel:hover { background: #e4e6eb; }
 
-        /* 🔥 [NEW] Follow List Specifics */
+        /* Follow List Specifics */
         .follow-list { display: flex; flex-direction: column; gap: 10px; }
         .follow-item { 
             display: flex; align-items: center; gap: 15px; padding: 10px; 
@@ -247,24 +247,77 @@
         .f-name { font-weight: 600; color: #333; font-size: 15px; }
         .f-role { font-size: 12px; color: #888; background: #eee; padding: 2px 8px; border-radius: 10px; }
 
-        /* --- 6. Chat CSS --- */
+        /* --- 6. Chat CSS (ยกมาจาก About Us เพื่อให้รองรับ Inbox/Message) --- */
         .chat-toggle-btn { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #fa4299; color: white; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; z-index: 9999; transition: transform 0.3s; }
         .chat-toggle-btn:hover { transform: scale(1.1); }
-        .chat-box { position: fixed; bottom: 90px; right: 20px; width: 320px; height: 450px; background: white; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.15); display: none; flex-direction: column; overflow: hidden; z-index: 9999; border: 1px solid #eee; }
-        .chat-header { background: #fa4299; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-        .chat-close { cursor: pointer; font-size: 20px; }
-        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; }
-        .msg-row { display: flex; align-items: flex-end; gap: 8px; }
-        .msg-row.me { flex-direction: row-reverse; }
-        .msg-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd; }
-        .msg-bubble { max-width: 70%; padding: 8px 12px; border-radius: 15px; font-size: 14px; word-wrap: break-word; }
-        .msg-row.other .msg-bubble { background: #e4e6eb; color: #333; border-bottom-left-radius: 2px; }
-        .msg-row.me .msg-bubble { background: #fa4299; color: white; border-bottom-right-radius: 2px; }
-        .msg-name { font-size: 10px; color: #888; margin-bottom: 2px; }
-        .msg-row.me .msg-name { text-align: right; }
-        .chat-input-area { padding: 10px; border-top: 1px solid #eee; background: white; display: flex; gap: 5px; }
-        .chat-input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 8px 15px; outline: none; }
-        .chat-send-btn { background: #fa4299; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        
+        .chat-box { 
+            position: fixed; bottom: 90px; right: 20px; 
+            width: 360px; height: 500px; 
+            background: white; border-radius: 16px; 
+            box-shadow: 0 5px 40px rgba(0,0,0,0.15); 
+            display: none; flex-direction: column; overflow: hidden; 
+            z-index: 9999; border: 1px solid #eee;
+        }
+        
+        /* Chat Header */
+        .chat-header { 
+            background: #fa4299; color: white; padding: 15px; 
+            font-weight: bold; display: flex; justify-content: space-between; 
+            align-items: center; height: 60px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .chat-header-user { display: flex; align-items: center; gap: 10px; }
+        .chat-back-btn { cursor: pointer; font-size: 18px; margin-right: 10px; display: none; }
+        .chat-close { cursor: pointer; font-size: 20px; opacity: 0.8; }
+        .chat-close:hover { opacity: 1; }
+
+        /* Views */
+        .view-section { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* Inbox View */
+        .inbox-list { flex: 1; overflow-y: auto; }
+        .inbox-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f5f5f5; cursor: pointer; transition: 0.2s; }
+        .inbox-item:hover { background: #fff0f5; }
+        .inbox-avatar { width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; object-fit: cover; border: 1px solid #eee; }
+        .inbox-info { flex: 1; min-width: 0; }
+        .inbox-name { font-weight: 600; font-size: 14px; color: #333; margin-bottom: 3px; }
+        .inbox-last-msg { font-size: 12px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Messages View */
+        .chat-messages { 
+            flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; 
+            display: flex; flex-direction: column; gap: 10px; 
+        }
+        
+        .msg-row { display: flex; align-items: flex-end; width: 100%; margin-bottom: 5px; }
+        .msg-row.me { justify-content: flex-end; }
+        .msg-row.other { justify-content: flex-start; }
+        
+        .msg-row > div {
+            max-width: 75%; display: flex; flex-direction: column;
+        }
+        .msg-row.me > div { align-items: flex-end; }
+        .msg-row.other > div { align-items: flex-start; }
+
+        .msg-avatar { 
+            width: 28px; height: 28px; border-radius: 50%; object-fit: cover; 
+            margin: 0 8px; flex-shrink: 0; border: 1px solid #eee; 
+        }
+        
+        .msg-bubble { 
+            padding: 10px 14px; border-radius: 18px; font-size: 14px; line-height: 1.5;
+            position: relative; word-wrap: break-word; word-break: break-word; 
+            overflow-wrap: anywhere; white-space: pre-wrap; max-width: 100%;
+        }
+        
+        .msg-row.other .msg-bubble { background: #e4e6eb; color: #333; border-bottom-left-radius: 4px; }
+        .msg-row.me .msg-bubble { background: #fa4299; color: white; border-bottom-right-radius: 4px; box-shadow: 0 2px 5px rgba(250, 66, 153, 0.2); }
+        
+        .chat-input-area { padding: 12px; border-top: 1px solid #eee; background: white; display: flex; gap: 8px; align-items: center; }
+        .chat-input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 10px 15px; outline: none; background: #f0f2f5; font-size: 14px; }
+        .chat-input:focus { border-color: #fa4299; background: white; }
+        .chat-send-btn { background: transparent; color: #fa4299; border: none; font-size: 20px; cursor: pointer; padding: 5px; transition: 0.2s; }
+        .chat-send-btn:hover { transform: scale(1.1); }
 
     </style>
 </head>
@@ -405,430 +458,525 @@
     <div class="chat-toggle-btn" onclick="toggleChat()">
         <i class="fas fa-comment-dots"></i>
     </div>
+    
     <div class="chat-box" id="chatBox">
         <div class="chat-header">
-            <span><i class="fas fa-comments"></i> Community Chat</span>
+            <div class="chat-header-user">
+                <i class="fas fa-arrow-left chat-back-btn" id="chatBackBtn" onclick="backToInbox()"></i>
+                <span id="chatTitle">ข้อความ</span>
+            </div>
             <span class="chat-close" onclick="toggleChat()">×</span>
         </div>
-        <div class="chat-messages" id="chatMessages">
-            <div style="text-align:center; color:#999; margin-top:20px;">กำลังโหลด...</div>
+
+        <div class="view-section" id="inboxView">
+            <div class="inbox-list" id="inboxList">
+                <div style="text-align:center; padding:20px; color:#999;">กำลังโหลด...</div>
+            </div>
         </div>
-        <div class="chat-input-area">
-            <input type="text" id="chatInput" class="chat-input" placeholder="พิมพ์ข้อความ..." onkeypress="handleEnter(event)">
-            <button class="chat-send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+
+        <div class="view-section" id="chatView" style="display:none;">
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" class="chat-input" placeholder="พิมพ์ข้อความ..." onkeypress="handleEnter(event)">
+                <button class="chat-send-btn" onclick="sendPrivateMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
         </div>
     </div>
 
-<script>
-    const BASE_API = 'http://localhost:3000';
-    let currentUser = null;
+    <script>
+        const BASE_API = 'http://localhost:3000';
+        let currentUser = null;
 
-    document.addEventListener('DOMContentLoaded', () => {
-        checkLoginStatus();
-        
-        if(localStorage.getItem('currentUser')) {
-            currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        document.addEventListener('DOMContentLoaded', () => {
+            checkLoginStatus();
             
-            // โหลดข้อมูลต่างๆ
-            loadProfile();
-            loadUserActivity();
-            loadFollowStats(); 
-            
-            loadNotifications();
-            setInterval(loadNotifications, 5000); 
-        } else {
-            Swal.fire({
-                icon: 'warning', title: 'กรุณาเข้าสู่ระบบ', timer: 1500, showConfirmButton: false
-            }).then(() => window.location.href = 'login.html');
-        }
-
-        window.addEventListener('click', (e) => {
-            const notiContainer = document.querySelector('.noti-icon-container');
-            if (notiContainer && !notiContainer.contains(e.target)) {
-                const dropdown = document.getElementById('notiDropdown');
-                if(dropdown) dropdown.classList.remove('active');
-            }
-        });
-    });
-
-    // --- Navbar & Auth Logic ---
-    function checkLoginStatus() {
-        const userJson = localStorage.getItem('currentUser');
-        const navRight = document.getElementById('navRightContent');
-        const template = document.getElementById('loggedInTemplate');
-
-        if (userJson && template) {
-            const user = JSON.parse(userJson);
-            const content = template.content.cloneNode(true);
-            navRight.innerHTML = ''; 
-            navRight.appendChild(content);
-
-            const userNameEl = document.getElementById('userName');
-            const userAvatarEl = document.getElementById('userAvatar');
-
-            if(userNameEl) userNameEl.textContent = user.username || user.name;
-            if(userAvatarEl) {
-                userAvatarEl.src = (user.avatar && user.avatar.length > 10) 
-                    ? user.avatar : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-            }
-        }
-    }
-
-    function logout() {
-        Swal.fire({
-            title: 'ออกจากระบบ?',
-            icon: 'question', showCancelButton: true, confirmButtonColor: '#fa4299',
-            cancelButtonText: 'ยกเลิก', confirmButtonText: 'ใช่, ออกจากระบบ'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                localStorage.removeItem('currentUser');
-                window.location.href = 'login.html';
-            }
-        });
-    }
-
-    // --- Profile Logic ---
-    async function loadProfile() {
-        try {
-            const uid = currentUser.id || currentUser.userId;
-            const res = await fetch(`${BASE_API}/api/users/${uid}`);
-            
-            if (res.ok) {
-                const freshData = await res.json();
-                currentUser = { ...currentUser, ...freshData };
-                localStorage.setItem("currentUser", JSON.stringify(currentUser));
-            }
-        } catch(err) { console.log("Offline mode"); }
-        renderProfile(currentUser);
-    }
-
-    function renderProfile(user) {
-        const nameEl = document.getElementById('display-name');
-        const bioEl = document.getElementById('display-bio');
-        const avatarEl = document.getElementById('display-avatar');
-        const roleEl = document.getElementById('display-role');
-
-        if(nameEl) nameEl.innerText = user.name;
-        if(bioEl) bioEl.innerText = user.bio || "ผู้ใช้คนนี้ยังไม่ได้ระบุคำแนะนำตัว";
-        if(avatarEl) avatarEl.src = (user.avatar && user.avatar.length > 10) ? user.avatar : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-
-        if (roleEl) {
-            if (user.role === 'tutor') {
-                roleEl.innerHTML = '<i class="fas fa-chalkboard-teacher"></i> Tutor';
-                roleEl.style.background = '#e3f2fd'; roleEl.style.color = '#1976d2';
+            if(localStorage.getItem('currentUser')) {
+                currentUser = JSON.parse(localStorage.getItem("currentUser"));
+                
+                // โหลดข้อมูล Profile
+                loadProfile();
+                loadFollowStats(); 
+                
+                // สำคัญ! เรียกฟังก์ชันโหลดคอร์ส/คลาส (ถ้ามี API จริง ข้อมูลจะขึ้น)
+                loadUserActivity(); 
+                
+                loadNotifications();
+                setInterval(loadNotifications, 5000); 
             } else {
-                roleEl.innerHTML = '<i class="fas fa-user-graduate"></i> Student';
-                roleEl.style.background = '#fff0f5'; roleEl.style.color = '#fa4299';
+                Swal.fire({
+                    icon: 'warning', title: 'กรุณาเข้าสู่ระบบ', timer: 1500, showConfirmButton: false
+                }).then(() => window.location.href = 'login.html');
+            }
+
+            window.addEventListener('click', (e) => {
+                const notiContainer = document.querySelector('.noti-icon-container');
+                if (notiContainer && !notiContainer.contains(e.target)) {
+                    const dropdown = document.getElementById('notiDropdown');
+                    if(dropdown) dropdown.classList.remove('active');
+                }
+            });
+        });
+
+        // --- Navbar & Auth Logic ---
+        function checkLoginStatus() {
+            const userJson = localStorage.getItem('currentUser');
+            const navRight = document.getElementById('navRightContent');
+            const template = document.getElementById('loggedInTemplate');
+
+            if (userJson && template) {
+                const user = JSON.parse(userJson);
+                const content = template.content.cloneNode(true);
+                navRight.innerHTML = ''; 
+                navRight.appendChild(content);
+
+                const userNameEl = document.getElementById('userName');
+                const userAvatarEl = document.getElementById('userAvatar');
+
+                if(userNameEl) userNameEl.textContent = user.username || user.name;
+                if(userAvatarEl) {
+                    userAvatarEl.src = (user.avatar && user.avatar.length > 10) 
+                        ? user.avatar : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                }
             }
         }
-    }
 
-    // 🔥 [NEW] Follow Stats & Popup Logic
-    async function loadFollowStats() {
-        try {
-            const res = await fetch(`${BASE_API}/api/follows?userId=${currentUser.id}`);
-            if(res.ok) {
-                const data = await res.json();
-                document.getElementById('stat-followers').innerText = data.followers.length;
-                document.getElementById('stat-following').innerText = data.following.length;
+        function logout() {
+            Swal.fire({
+                title: 'ออกจากระบบ?',
+                icon: 'question', showCancelButton: true, confirmButtonColor: '#fa4299',
+                cancelButtonText: 'ยกเลิก', confirmButtonText: 'ใช่, ออกจากระบบ'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('currentUser');
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+
+        // --- Notification Logic ---
+        function toggleNotification(event) {
+            if(event) event.stopPropagation();
+            const dropdown = document.getElementById('notiDropdown');
+            if(dropdown) dropdown.classList.toggle('active');
+        }
+
+        async function loadNotifications() {
+            const list = document.getElementById('notiList');
+            const badge = document.getElementById('notiCount');
+            try {
+                if(!list) return;
+                const res = await fetch(`${BASE_API}/api/notifications?userId=${currentUser.id}`);
+                const notifications = await res.json();
+                
+                if (!Array.isArray(notifications)) return;
+                const unreadCount = notifications.filter(n => !n.read).length;
+
+                if (unreadCount > 0) {
+                    badge.style.display = 'flex';
+                    badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                } else {
+                    badge.style.display = 'none';
+                }
+
+                if (notifications.length === 0) {
+                    list.innerHTML = '<div class="no-noti">ไม่มีการแจ้งเตือน</div>';
+                } else {
+                    list.innerHTML = notifications.map(item => `
+                        <div class="noti-item ${item.read ? '' : 'unread'}">
+                            <img src="${item.senderAvatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="noti-avatar">
+                            <div style="flex:1">
+                                <div class="noti-text">
+                                    <strong>${item.senderName}</strong> ${item.message}
+                                </div>
+                                <span class="noti-time">${item.time}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {}
+        }
+
+        async function markAllRead() {
+            const badge = document.getElementById('notiCount');
+            if (badge) badge.style.display = 'none';
+            const unreadItems = document.querySelectorAll('.noti-item.unread');
+            unreadItems.forEach(item => {
+                item.classList.remove('unread');
+                item.style.backgroundColor = 'white';
+                item.style.borderLeft = 'none';
+            });
+
+            try {
+                await fetch(`${BASE_API}/api/notifications/mark-read`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: currentUser.id })
+                });
+            } catch (err) {}
+        }
+
+        // --- Profile Logic ---
+        async function loadProfile() {
+            try {
+                const uid = currentUser.id || currentUser.userId;
+                const res = await fetch(`${BASE_API}/api/users/${uid}`);
+                
+                if (res.ok) {
+                    const freshData = await res.json();
+                    currentUser = { ...currentUser, ...freshData };
+                    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+                }
+            } catch(err) { console.log("Offline mode"); }
+            renderProfile(currentUser);
+        }
+
+        function renderProfile(user) {
+            const nameEl = document.getElementById('display-name');
+            const bioEl = document.getElementById('display-bio');
+            const avatarEl = document.getElementById('display-avatar');
+            const roleEl = document.getElementById('display-role');
+
+            if(nameEl) nameEl.innerText = user.name;
+            if(bioEl) bioEl.innerText = user.bio || "ผู้ใช้คนนี้ยังไม่ได้ระบุคำแนะนำตัว";
+            if(avatarEl) avatarEl.src = (user.avatar && user.avatar.length > 10) ? user.avatar : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+
+            if (roleEl) {
+                if (user.role === 'tutor') {
+                    roleEl.innerHTML = '<i class="fas fa-chalkboard-teacher"></i> Tutor';
+                    roleEl.style.background = '#e3f2fd'; roleEl.style.color = '#1976d2';
+                } else {
+                    roleEl.innerHTML = '<i class="fas fa-user-graduate"></i> Student';
+                    roleEl.style.background = '#fff0f5'; roleEl.style.color = '#fa4299';
+                }
             }
-        } catch (e) { console.error("Stats Error:", e); }
-    }
+        }
 
-    async function openFollowList(type) {
-        const modal = document.getElementById('followModal');
-        const container = document.getElementById('followListContainer');
-        const title = document.getElementById('followModalTitle');
+        // --- Follow Stats & Popup Logic ---
+        async function loadFollowStats() {
+            try {
+                const res = await fetch(`${BASE_API}/api/follows?userId=${currentUser.id}`);
+                if(res.ok) {
+                    const data = await res.json();
+                    document.getElementById('stat-followers').innerText = data.followers.length;
+                    document.getElementById('stat-following').innerText = data.following.length;
+                }
+            } catch (e) { console.error("Stats Error:", e); }
+        }
 
-        modal.style.display = 'flex';
-        title.innerText = type === 'followers' ? 'ผู้ที่ติดตามฉัน (Followers)' : 'กำลังติดตาม (Following)';
-        container.innerHTML = '<div style="text-align:center; padding:20px;">กำลังโหลด...</div>';
+        async function openFollowList(type) {
+            const modal = document.getElementById('followModal');
+            const container = document.getElementById('followListContainer');
+            const title = document.getElementById('followModalTitle');
 
-        try {
-            // เรียก API ที่เพิ่งเพิ่มใน Server.js
-            const res = await fetch(`${BASE_API}/api/users/${currentUser.id}/follow-list?type=${type}`);
-            const users = await res.json();
+            modal.style.display = 'flex';
+            title.innerText = type === 'followers' ? 'ผู้ที่ติดตามฉัน (Followers)' : 'กำลังติดตาม (Following)';
+            container.innerHTML = '<div style="text-align:center; padding:20px;">กำลังโหลด...</div>';
 
-            if (users.length === 0) {
-                container.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">ยังไม่มีรายชื่อ</div>';
+            try {
+                const res = await fetch(`${BASE_API}/api/users/${currentUser.id}/follow-list?type=${type}`);
+                const users = await res.json();
+
+                if (users.length === 0) {
+                    container.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">ยังไม่มีรายชื่อ</div>';
+                    return;
+                }
+
+                container.innerHTML = users.map(u => `
+                    <div class="follow-item">
+                        <img src="${u.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="f-avatar">
+                        <div class="f-info">
+                            <div class="f-name">${u.name}</div>
+                            <span class="f-role">${u.role}</span>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = '<div style="text-align:center; color:red;">โหลดข้อมูลไม่สำเร็จ</div>';
+            }
+        }
+
+        // --- Content Loading ---
+        async function loadUserActivity() {
+            const userId = currentUser.id || currentUser.userId;
+
+            try {
+                const resStudent = await fetch(`${BASE_API}/api/users/${userId}/courses`);
+                if (resStudent.ok) {
+                    const studentCourses = await resStudent.json();
+                    renderStudentCourses(studentCourses);
+                }
+            } catch (err) { renderStudentCourses([]); }
+
+            try {
+                const resTutor = await fetch(`${BASE_API}/api/study-posts`);
+                if (resTutor.ok) {
+                    const allPosts = await resTutor.json();
+                    const myClasses = allPosts.filter(p => 
+                        String(p.ownerId) === String(userId) || p.owner_name === currentUser.name
+                    );
+                    renderTutorClasses(myClasses);
+                }
+            } catch (err) { renderTutorClasses([]); }
+        }
+
+        function renderStudentCourses(courses) {
+            const container = document.getElementById('course-container');
+            if (!container) return;
+
+            if (!courses || courses.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-box-open" style="font-size: 40px; margin-bottom: 15px; opacity: 0.5;"></i><br>
+                        ยังไม่ได้ลงทะเบียนเรียนคอร์สใดๆ
+                        <br><a href="dashboard.html" style="color:var(--primary-pink); font-size:14px; font-weight:600; text-decoration:underline;">ไปหาคอร์สเรียนกันเถอะ</a>
+                    </div>`;
                 return;
             }
 
-            container.innerHTML = users.map(u => `
-                <div class="follow-item">
-                    <img src="${u.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="f-avatar">
-                    <div class="f-info">
-                        <div class="f-name">${u.name}</div>
-                        <span class="f-role">${u.role}</span>
-                    </div>
-                </div>
-            `).join('');
-
-        } catch (e) {
-            console.error(e);
-            container.innerHTML = '<div style="text-align:center; color:red;">โหลดข้อมูลไม่สำเร็จ</div>';
-        }
-    }
-
-    // --- Content Loading ---
-    async function loadUserActivity() {
-        const userId = currentUser.id || currentUser.userId;
-
-        try {
-            const resStudent = await fetch(`${BASE_API}/api/users/${userId}/courses`);
-            if (resStudent.ok) {
-                const studentCourses = await resStudent.json();
-                renderStudentCourses(studentCourses);
-            }
-        } catch (err) { renderStudentCourses([]); }
-
-        try {
-            const resTutor = await fetch(`${BASE_API}/api/study-posts`);
-            if (resTutor.ok) {
-                const allPosts = await resTutor.json();
-                const myClasses = allPosts.filter(p => 
-                    String(p.ownerId) === String(userId) || p.owner_name === currentUser.name
-                );
-                renderTutorClasses(myClasses);
-            }
-        } catch (err) { renderTutorClasses([]); }
-    }
-
-    function renderStudentCourses(courses) {
-        const container = document.getElementById('course-container');
-        if (!container) return;
-
-        if (!courses || courses.length === 0) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-box-open" style="font-size: 40px; margin-bottom: 15px; opacity: 0.5;"></i><br>
-                    ยังไม่ได้ลงทะเบียนเรียนคอร์สใดๆ
-                    <br><a href="dashboard.html" style="color:var(--primary-pink); font-size:14px; font-weight:600; text-decoration:underline;">ไปหาคอร์สเรียนกันเถอะ</a>
-                </div>`;
-            return;
-        }
-
-        container.innerHTML = courses.map(c => `
-            <div class="content-card" onclick="window.location.href='post-detail.html?id=${c.id}'">
-                <span class="status-badge status-learning">${c.category || 'วิชาทั่วไป'}</span>
-                <h3 class="card-title">${c.title}</h3>
-                <p class="card-subtitle">สอนโดย: ${c.name || 'Tutor'}</p>
-                <div class="card-time"><i class="far fa-clock"></i> ${c.time || '-'}</div>
-                <div class="card-desc">${c.detail || ''}</div>
-            </div>
-        `).join('');
-    }
-
-    function renderTutorClasses(classes) {
-        const container = document.getElementById('tutor-class-container');
-        if (!container) return;
-        
-        let html = `
-            <div class="content-card create-card" onclick="window.location.href='dashboard.html'">
-                <div style="background:#fa4299; width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white;">
-                    <i class="fas fa-plus"></i>
-                </div>
-                <div style="color:#fa4299; font-weight:700;">สร้างคลาสสอนใหม่</div>
-            </div>
-        `;
-
-        if (classes && classes.length > 0) {
-            html += classes.map(c => `
+            container.innerHTML = courses.map(c => `
                 <div class="content-card" onclick="window.location.href='post-detail.html?id=${c.id}'">
-                    <span class="status-badge status-teaching">${c.category || 'วิชาทั่วไป'}</span>
+                    <span class="status-badge status-learning">${c.category || 'วิชาทั่วไป'}</span>
                     <h3 class="card-title">${c.title}</h3>
-                    <p class="card-subtitle">สอนโดย: (คุณ)</p>
+                    <p class="card-subtitle">สอนโดย: ${c.name || 'Tutor'}</p>
                     <div class="card-time"><i class="far fa-clock"></i> ${c.time || '-'}</div>
                     <div class="card-desc">${c.detail || ''}</div>
                 </div>
             `).join('');
         }
-        container.innerHTML = html;
-    }
 
-    // --- Edit Profile ---
-    let tempAvatarBase64 = "";
-    function openEditModal() {
-        document.getElementById('edit-name').value = currentUser.name;
-        document.getElementById('edit-bio').value = currentUser.bio || "";
-        document.getElementById('edit-role').value = currentUser.role || "student";
-        document.getElementById('edit-preview-img').src = (currentUser.avatar && currentUser.avatar.length > 10) ? currentUser.avatar : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-        tempAvatarBase64 = currentUser.avatar;
-        document.getElementById('editModal').style.display = 'flex';
-    }
-    function closeModal() { document.getElementById('editModal').style.display = 'none'; }
-    
-    function handleFileSelect(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                tempAvatarBase64 = e.target.result;
-                document.getElementById('edit-preview-img').src = tempAvatarBase64;
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    async function saveProfile() {
-        const updatedData = {
-            name: document.getElementById('edit-name').value,
-            bio: document.getElementById('edit-bio').value,
-            role: document.getElementById('edit-role').value, 
-            avatar: tempAvatarBase64
-        };
-
-        Object.assign(currentUser, updatedData);
-        localStorage.setItem("currentUser", JSON.stringify(currentUser));
-        renderProfile(currentUser);
-        checkLoginStatus();
-        closeModal();
-
-        try {
-            const uid = currentUser.id || currentUser.userId;
-            await fetch(`${BASE_API}/api/users/${uid}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedData)
-            });
-            Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', timer: 1500, showConfirmButton: false });
-        } catch(err) { console.warn("Save local only"); }
-    }
-
-    // --- Notification Logic ---
-    function toggleNotification(event) {
-        if(event) event.stopPropagation();
-        const dropdown = document.getElementById('notiDropdown');
-        if(dropdown) dropdown.classList.toggle('active');
-    }
-
-    async function loadNotifications() {
-        const list = document.getElementById('notiList');
-        const badge = document.getElementById('notiCount');
-        try {
-            if(!list) return;
-            const res = await fetch(`${BASE_API}/api/notifications?userId=${currentUser.id}`);
-            const notifications = await res.json();
+        function renderTutorClasses(classes) {
+            const container = document.getElementById('tutor-class-container');
+            if (!container) return;
             
-            if (!Array.isArray(notifications)) return;
-            const unreadCount = notifications.filter(n => !n.read).length;
+            let html = `
+                <div class="content-card create-card" onclick="window.location.href='dashboard.html'">
+                    <div style="background:#fa4299; width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white;">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div style="color:#fa4299; font-weight:700;">สร้างคลาสสอนใหม่</div>
+                </div>
+            `;
 
-            if (unreadCount > 0) {
-                badge.style.display = 'flex';
-                badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
-            } else {
-                badge.style.display = 'none';
-            }
-
-            if (notifications.length === 0) {
-                list.innerHTML = '<div class="no-noti">ไม่มีการแจ้งเตือน</div>';
-            } else {
-                list.innerHTML = notifications.map(item => `
-                    <div class="noti-item ${item.read ? '' : 'unread'}">
-                        <img src="${item.senderAvatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="noti-avatar">
-                        <div style="flex:1">
-                            <div class="noti-text">
-                                <strong>${item.senderName}</strong> ${item.message}
-                            </div>
-                            <span class="noti-time">${item.time}</span>
-                        </div>
+            if (classes && classes.length > 0) {
+                html += classes.map(c => `
+                    <div class="content-card" onclick="window.location.href='post-detail.html?id=${c.id}'">
+                        <span class="status-badge status-teaching">${c.category || 'วิชาทั่วไป'}</span>
+                        <h3 class="card-title">${c.title}</h3>
+                        <p class="card-subtitle">สอนโดย: (คุณ)</p>
+                        <div class="card-time"><i class="far fa-clock"></i> ${c.time || '-'}</div>
+                        <div class="card-desc">${c.detail || ''}</div>
                     </div>
                 `).join('');
             }
-        } catch (error) {}
-    }
-
-    async function markAllRead() {
-        const badge = document.getElementById('notiCount');
-        if (badge) badge.style.display = 'none';
-        const unreadItems = document.querySelectorAll('.noti-item.unread');
-        unreadItems.forEach(item => {
-            item.classList.remove('unread');
-            item.style.backgroundColor = 'white';
-            item.style.borderLeft = 'none';
-        });
-
-        try {
-            await fetch(`${BASE_API}/api/notifications/mark-read`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: currentUser.id })
-            });
-        } catch (err) {}
-    }
-
-    // --- Chat Logic ---
-    let isChatOpen = false;
-    let chatInterval = null;
-
-    function toggleChat() {
-        const box = document.getElementById('chatBox');
-        isChatOpen = !isChatOpen;
-        box.style.display = isChatOpen ? 'flex' : 'none';
-        if (isChatOpen) {
-            loadMessages(); 
-            chatInterval = setInterval(loadMessages, 3000); 
-            scrollToBottom();
-        } else {
-            clearInterval(chatInterval); 
+            container.innerHTML = html;
         }
-    }
 
-    async function loadMessages() {
-        try {
-            const res = await fetch(`${BASE_API}/api/chat`);
-            if (!res.ok) return; 
-            const messages = await res.json();
-            renderMessages(messages);
-        } catch (err) { }
-    }
-
-    function renderMessages(messages) {
-        const container = document.getElementById('chatMessages');
-        const myName = currentUser ? currentUser.name : "";
+        // --- Edit Profile ---
+        let tempAvatarBase64 = "";
+        function openEditModal() {
+            document.getElementById('edit-name').value = currentUser.name;
+            document.getElementById('edit-bio').value = currentUser.bio || "";
+            document.getElementById('edit-role').value = currentUser.role || "student";
+            document.getElementById('edit-preview-img').src = (currentUser.avatar && currentUser.avatar.length > 10) ? currentUser.avatar : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+            tempAvatarBase64 = currentUser.avatar;
+            document.getElementById('editModal').style.display = 'flex';
+        }
+        function closeModal() { document.getElementById('editModal').style.display = 'none'; }
         
-        container.innerHTML = messages.map(msg => {
-            const isMe = msg.sender === myName;
-            return `
-                <div class="msg-row ${isMe ? 'me' : 'other'}">
-                    ${!isMe ? `<img src="${msg.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="msg-avatar">` : ''}
-                    <div>
-                        <div class="msg-name">${msg.sender}</div>
-                        <div class="msg-bubble">${msg.text}</div>
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempAvatarBase64 = e.target.result;
+                    document.getElementById('edit-preview-img').src = tempAvatarBase64;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function saveProfile() {
+            const updatedData = {
+                name: document.getElementById('edit-name').value,
+                bio: document.getElementById('edit-bio').value,
+                role: document.getElementById('edit-role').value, 
+                avatar: tempAvatarBase64
+            };
+
+            Object.assign(currentUser, updatedData);
+            localStorage.setItem("currentUser", JSON.stringify(currentUser));
+            renderProfile(currentUser);
+            checkLoginStatus();
+            closeModal();
+
+            try {
+                const uid = currentUser.id || currentUser.userId;
+                await fetch(`${BASE_API}/api/users/${uid}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedData)
+                });
+                Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', timer: 1500, showConfirmButton: false });
+            } catch(err) { console.warn("Save local only"); }
+        }
+
+        // ===============================================
+        // 💬 PRIVATE CHAT LOGIC (ใช้ตัวเดิมจาก About Us ตามสั่ง)
+        // ===============================================
+        let isChatOpen = false;
+        let chatInterval = null;
+        let currentChatPartner = null; 
+
+        function toggleChat() {
+            const box = document.getElementById('chatBox');
+            if (!currentUser) {
+                Swal.fire('แจ้งเตือน', 'กรุณาเข้าสู่ระบบก่อนใช้งานแชท', 'warning');
+                return;
+            }
+
+            isChatOpen = !isChatOpen;
+            box.style.display = isChatOpen ? 'flex' : 'none';
+
+            if (isChatOpen) {
+                backToInbox();
+                chatInterval = setInterval(refreshChat, 3000); 
+            } else {
+                clearInterval(chatInterval); 
+            }
+        }
+
+        function refreshChat() {
+            if (!isChatOpen) return;
+            if (currentChatPartner) {
+                loadPrivateMessages(); 
+            } else {
+                loadInbox(); 
+            }
+        }
+
+        // --- 1. หน้า Inbox ---
+        async function loadInbox() {
+            const inboxList = document.getElementById('inboxList');
+            try {
+                const res = await fetch(`${BASE_API}/api/chat-inbox/${currentUser.id}`);
+                const data = await res.json();
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    inboxList.innerHTML = `
+                        <div style="text-align:center; padding:40px; color:#aaa;">
+                            <i class="far fa-paper-plane" style="font-size:30px; margin-bottom:10px;"></i><br>
+                            ยังไม่มีข้อความ<br>
+                            <small>เลือก "Chat" จากโปรไฟล์เพื่อนๆ เพื่อเริ่มคุย</small>
+                        </div>`;
+                    return;
+                }
+
+                inboxList.innerHTML = data.map(chat => `
+                    <div class="inbox-item" onclick='openChat(${JSON.stringify(chat)})'>
+                        <img src="${chat.partnerAvatar || 'https://via.placeholder.com/40'}" class="inbox-avatar">
+                        <div class="inbox-info">
+                            <div class="inbox-name">${chat.partnerName}</div>
+                            <div class="inbox-last-msg">${chat.lastMessage}</div>
+                        </div>
                     </div>
-                    ${isMe ? `<img src="${msg.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="msg-avatar">` : ''}
-                </div>
-            `;
-        }).join('');
-    }
+                `).join('');
+            } catch (error) { console.error("Load inbox error", error); }
+        }
 
-    async function sendMessage() {
-        const input = document.getElementById('chatInput');
-        const text = input.value.trim();
-        if (!text) return;
+        // --- 2. เปิดห้องแชท ---
+        function openChat(partner) {
+            const pId = partner.partnerId || partner.id;
+            const pName = partner.partnerName || partner.name;
+            const pAvatar = partner.partnerAvatar || partner.avatar || 'https://via.placeholder.com/30';
 
-        try {
-            await fetch(`${BASE_API}/api/chat`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    sender: currentUser.name,
-                    avatar: currentUser.avatar,
-                    text: text
-                })
-            });
-            input.value = ''; 
-            loadMessages(); 
-        } catch (e) {}
-    }
+            currentChatPartner = { partnerId: pId, partnerName: pName, partnerAvatar: pAvatar };
+            
+            document.getElementById('inboxView').style.display = 'none';
+            document.getElementById('chatView').style.display = 'flex';
+            document.getElementById('chatBackBtn').style.display = 'block';
+            
+            document.getElementById('chatTitle').innerHTML = `
+                <img src="${pAvatar}" style="width:25px; height:25px; border-radius:50%; vertical-align:middle; object-fit:cover;"> 
+                ${pName}`;
 
-    function handleEnter(e) { if (e.key === 'Enter') sendMessage(); }
-    function scrollToBottom() {
-        const container = document.getElementById('chatMessages');
-        container.scrollTop = container.scrollHeight;
-    }
+            loadPrivateMessages();
+            setTimeout(scrollToBottom, 200);
+        }
 
-</script>
+        // --- 3. กลับหน้า Inbox ---
+        function backToInbox() {
+            currentChatPartner = null;
+            document.getElementById('inboxView').style.display = 'flex';
+            document.getElementById('chatView').style.display = 'none';
+            document.getElementById('chatBackBtn').style.display = 'none';
+            document.getElementById('chatTitle').textContent = 'ข้อความ';
+            loadInbox();
+        }
+
+        // --- 4. โหลดข้อความ ---
+        async function loadPrivateMessages() {
+            if (!currentChatPartner) return;
+            const container = document.getElementById('chatMessages');
+
+            try {
+                const res = await fetch(`${BASE_API}/api/private-chat/${currentUser.id}/${currentChatPartner.partnerId}`);
+                const messages = await res.json();
+                
+                const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+
+                container.innerHTML = messages.map(msg => {
+                    const isMe = String(msg.fromId) === String(currentUser.id);
+                    return `
+                        <div class="msg-row ${isMe ? 'me' : 'other'}">
+                            ${!isMe ? `<img src="${msg.senderAvatar || 'https://via.placeholder.com/30'}" class="msg-avatar">` : ''}
+                            <div>
+                                <div class="msg-bubble">${msg.message}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                if (isAtBottom) scrollToBottom();
+                
+            } catch (err) { console.error("Chat Error:", err); }
+        }
+
+        // --- 5. ส่งข้อความ ---
+        async function sendPrivateMessage() {
+            if (!currentChatPartner) return;
+            
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+            
+            try {
+                await fetch(`${BASE_API}/api/private-chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fromId: currentUser.id,
+                        toId: currentChatPartner.partnerId,
+                        message: text,
+                        senderName: currentUser.username || currentUser.name,
+                        senderAvatar: currentUser.avatar
+                    })
+                });
+                input.value = ''; 
+                loadPrivateMessages(); 
+                scrollToBottom();
+            } catch (e) { console.log("ส่งข้อความไม่ได้"); }
+        }
+
+        function handleEnter(e) { if (e.key === 'Enter') sendPrivateMessage(); }
+        
+        function scrollToBottom() {
+            const container = document.getElementById('chatMessages');
+            container.scrollTop = container.scrollHeight;
+        }
+
+    </script>
 
 </body>
 </html>
