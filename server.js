@@ -530,5 +530,9 @@ app.listen(PORT, () => {
             console.log(`📂 Creating new file: ${file}`);
             saveJsonFile(file, []);
         }
+        // เพิ่มส่วนนี้ใน server.js เพื่อให้เวลาเข้า domain/ แล้วมันเปิดหน้าแรกให้
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'main.html'));
+});
     });
 });

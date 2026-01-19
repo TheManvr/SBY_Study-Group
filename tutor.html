@@ -160,16 +160,27 @@
         .btn-msg { background: #f0f2f5; color: #333; }
         .btn-msg:hover { background: #e4e6eb; }
 
-        /* --- UPDATED CHAT UI --- */
+        /* --- UPDATED CHAT UI (แก้การแสดงผลเพี้ยน / ตกบรรทัด) --- */
         .chat-toggle-btn { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #fa4299; color: white; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; z-index: 9999; transition: transform 0.3s; }
         .chat-toggle-btn:hover { transform: scale(1.1); }
         
-        .chat-box { position: fixed; bottom: 90px; right: 20px; width: 340px; height: 500px; background: white; border-radius: 16px; box-shadow: 0 5px 30px rgba(0,0,0,0.15); display: none; flex-direction: column; overflow: hidden; z-index: 9999; border: 1px solid #eee; }
+        .chat-box { 
+            position: fixed; bottom: 90px; right: 20px; 
+            width: 360px; height: 500px; 
+            background: white; border-radius: 16px; 
+            box-shadow: 0 5px 40px rgba(0,0,0,0.15); 
+            display: none; flex-direction: column; overflow: hidden; 
+            z-index: 9999; border: 1px solid #eee;
+        }
         
         /* Chat Header */
-        .chat-header { background: #fa4299; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; height: 60px; }
+        .chat-header { 
+            background: #fa4299; color: white; padding: 15px; 
+            font-weight: bold; display: flex; justify-content: space-between; 
+            align-items: center; height: 60px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
         .chat-header-user { display: flex; align-items: center; gap: 10px; }
-        .chat-header-avatar { width: 32px; height: 32px; border-radius: 50%; background: white; border: 2px solid white; }
+        .chat-header-avatar { width: 32px; height: 32px; border-radius: 50%; background: white; border: 2px solid white; object-fit: cover; }
         .chat-back-btn { cursor: pointer; font-size: 18px; margin-right: 10px; display: none; }
         .chat-close { cursor: pointer; font-size: 20px; opacity: 0.8; }
         .chat-close:hover { opacity: 1; }
@@ -186,44 +197,55 @@
         .inbox-name { font-weight: 600; font-size: 14px; color: #333; margin-bottom: 3px; }
         .inbox-last-msg { font-size: 12px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Messages View */
-        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; display: flex; flex-direction: column; gap: 8px; }
+        /* Messages View (แก้เรื่องตกบรรทัด) */
+        .chat-messages { 
+            flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; 
+            display: flex; flex-direction: column; gap: 10px; 
+        }
         
-        .msg-row { display: flex; align-items: flex-end; gap: 8px; }
-        .msg-row.me { flex-direction: row-reverse; }
-        .msg-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+        .msg-row { display: flex; align-items: flex-end; width: 100%; margin-bottom: 5px; }
+        .msg-row.me { justify-content: flex-end; }
+        .msg-row.other { justify-content: flex-start; }
+        
+        /* --- จุดที่แก้ไขหลัก --- */
+        .msg-row > div {
+            max-width: 75%; /* บังคับให้ div ที่หุ้ม bubble ห้ามกว้างเกิน 75% ของจอ */
+            display: flex;
+            flex-direction: column;
+        }
+        .msg-row.me > div { align-items: flex-end; }
+        .msg-row.other > div { align-items: flex-start; }
+        /* ------------------- */
+
+        .msg-avatar { 
+            width: 28px; height: 28px; border-radius: 50%; object-fit: cover; 
+            margin: 0 8px; flex-shrink: 0; border: 1px solid #eee; 
+        }
+        
         .msg-bubble { 
-            max-width: 70%;
-            min-width: 40px;
             padding: 10px 14px;
             border-radius: 18px;
             font-size: 14px;
             line-height: 1.5;
-            word-break: break-word;
-            background-clip: padding-box;
             position: relative;
-            text-align: left;
-            background: inherit;
+            
+            /* ✅ แก้ปัญหาตัวอักษรตกบรรทัด/ยาวเกิน แบบเบ็ดเสร็จ */
+            word-wrap: break-word;
+            word-break: break-word; 
+            overflow-wrap: anywhere; /* คำสั่งนี้จะบังคับตัดคำถ้ามันยาวเกินกล่อง */
+            white-space: pre-wrap; /* รักษารูปแบบการขึ้นบรรทัดใหม่ */
+            
+            max-width: 100%; /* ให้กว้างเต็มที่เท่าที่ div แม่มันยอม (คือ 75%) */
         }
+        
         .msg-row.other .msg-bubble { background: #e4e6eb; color: #333; border-bottom-left-radius: 4px; }
-        .msg-row.me .msg-bubble { background: #fa4299; color: white; border-bottom-right-radius: 4px; }
-        .msg-time { font-size: 10px; color: #aaa; margin-top: 2px; }
-        .msg-row.me .msg-time { text-align: right; }
-
+        .msg-row.me .msg-bubble { background: #fa4299; color: white; border-bottom-right-radius: 4px; box-shadow: 0 2px 5px rgba(250, 66, 153, 0.2); }
+        
         .chat-input-area { padding: 12px; border-top: 1px solid #eee; background: white; display: flex; gap: 8px; align-items: center; }
-        .chat-input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 8px 15px; outline: none; background: #f0f2f5; }
+        .chat-input { flex: 1; border: 1px solid #ddd; border-radius: 20px; padding: 10px 15px; outline: none; background: #f0f2f5; font-size: 14px; }
         .chat-input:focus { border-color: #fa4299; background: white; }
         .chat-send-btn { background: transparent; color: #fa4299; border: none; font-size: 20px; cursor: pointer; padding: 5px; transition: 0.2s; }
         .chat-send-btn:hover { transform: scale(1.1); }
-
-        /* เพิ่ม: ทำให้ลิ้งก์ในแชทกดได้และสวยงาม */
-                .msg-bubble a {
-                    color: inherit;          /* ให้สีเดียวกับตัวหนังสือ (ขาว หรือ ดำ) */
-                    font-weight: bold;       /* ตัวหนาขึ้นนิดนึง */
-                    text-decoration: underline;
-                }
-                .msg-row.other .msg-bubble a { color: #007bff; } /* ลิ้งก์ฝั่งเพื่อนเป็นสีฟ้า */
-                .msg-row.me .msg-bubble a { color: #fff; }       /* ลิ้งก์ฝั่งเราเป็นสีขาว */
 
     </style>
 </head>
