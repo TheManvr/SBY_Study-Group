@@ -68,5 +68,15 @@
     "role": "student",
     "bio": "สวัสดีคร่ะ",
     "avatar": "https://ui-avatars.com/api/?name=Aom&background=random"
+  },
+  {
+    "id": "1768847353533",
+    "userId": "Aom",
+    "name": "Aom",
+    "password": "123",
+    "email": "panatchakorn1511@gmail.com",
+    "role": "student",
+    "bio": "สวัสดีคร่ะ",
+    "avatar": "https://ui-avatars.com/api/?name=Aom&background=random"
   }
 ]
