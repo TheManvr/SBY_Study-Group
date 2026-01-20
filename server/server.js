@@ -6,7 +6,7 @@ const path = require('path');
 
 const app = express();
 app.use(cors());
-
+app.use(express.static(path.join(__dirname, '../client')));
 // ✅ 1. ตั้งค่าให้รับรูปภาพขนาดใหญ่ได้ (50MB)
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
@@ -15,13 +15,13 @@ app.use(express.static(__dirname));
 // ==========================================
 // 📂 Database Helper Functions
 // ==========================================
-const DB_FILE = 'database.json';
-const STUDY_POSTS_FILE = 'study_posts.json';
-const CHAT_FILE = 'chat.json'; // Global Chat
-const PRIVATE_CHAT_FILE = 'private_chats.json'; // Private Chat
-const NOTIFICATIONS_FILE = 'notifications.json';
-const REGISTRATIONS_FILE = 'registrations.json'; 
-const FOLLOWS_FILE = 'follows.json'; 
+const DB_FILE = './data/database.json';
+const STUDY_POSTS_FILE = './data/study_posts.json';
+const CHAT_FILE = './data/chat.json'; // Global Chat
+const PRIVATE_CHAT_FILE = './data/private_chats.json'; // Private Chat
+const NOTIFICATIONS_FILE = './data/notifications.json';
+const REGISTRATIONS_FILE = './data/registrations.json'; 
+const FOLLOWS_FILE = './data/follows.json'; 
 
 // ✅ ฟังก์ชันอ่านไฟล์ (Helper)
 function readJsonFile(filename) {
