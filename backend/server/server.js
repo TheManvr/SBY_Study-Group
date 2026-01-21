@@ -520,12 +520,12 @@ app.get('/api/users/:userId/courses', (req, res) => {
 
 // ✅ สำคัญมาก: บอก Server ว่าถ้าเข้าหน้าแรก (/) ให้ส่งไฟล์ main.html ไปแสดง
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'main.html'));
+    res.sendFile(path.join(__dirname, './frontend/client/main.html'));
 });
 
 // ✅ เพิ่มเผื่อไว้: ถ้าเข้า /login ก็ให้ส่ง login.html (เผื่ออนาคต)
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'login.html'));
+    res.sendFile(path.join(__dirname, './frontend/client/login.html'));
 });
 
 // ==========================================
@@ -544,7 +544,7 @@ app.listen(PORT, () => {
         }
         // เพิ่มส่วนนี้ใน server.js เพื่อให้เวลาเข้า domain/ แล้วมันเปิดหน้าแรกให้
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'main.html'));
+    res.sendFile(path.join(__dirname, './frontend/client/main.html'));
 });
     });
 });
