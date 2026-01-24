@@ -78,5 +78,15 @@
     "role": "student",
     "bio": "สวัสดีคร่ะ",
     "avatar": "https://ui-avatars.com/api/?name=Aom&background=random"
+  },
+  {
+    "id": "1769064505743",
+    "userId": "Guy",
+    "name": "Guy",
+    "password": "123",
+    "email": "123@email",
+    "role": "tutor",
+    "bio": "ยังไม่มีข้อมูลแนะนำตัว...",
+    "avatar": "https://ui-avatars.com/api/?name=Guy&background=random"
   }
 ]
