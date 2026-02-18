@@ -73,32 +73,17 @@
         .section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 15px; }
         .section-title { font-size: 26px; font-weight: 600; color: #333; position: relative; }
         .section-title::after { content: ''; position: absolute; bottom: -17px; left: 0; width: 60px; height: 4px; background: var(--primary-pink); border-radius: 2px; }
-        
-        /* Carousel Control */
+
+        /* Carousel Control (ยังใช้กับติวเตอร์แนะนำ) */
         .slider-controls { display: flex; gap: 10px; align-items: center; }
         .slider-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #ddd; background: white; color: #555; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
         .slider-btn:hover { background: var(--primary-pink); color: white; border-color: var(--primary-pink); }
 
         .carousel-view { 
             display: flex; gap: 25px; overflow-x: auto; padding: 20px 5px; scroll-behavior: smooth; 
-            scrollbar-width: none; /* Firefox */
+            scrollbar-width: none;
         }
-        .carousel-view::-webkit-scrollbar { display: none; /* Chrome */ }
-
-        /* 🔥 Course Card */
-        .course-card { 
-            min-width: 280px; background: white; border-radius: 16px; overflow: hidden; 
-            box-shadow: var(--card-shadow); text-decoration: none; color: inherit; transition: 0.3s; 
-            border: 1px solid transparent; display: flex; flex-direction: column;
-        }
-        .course-card:hover { transform: translateY(-8px); border-color: #ffdceb; box-shadow: 0 15px 30px rgba(250, 66, 153, 0.15); }
-        .course-img-box { width: 100%; height: 160px; overflow: hidden; background: #eee; position: relative; }
-        .course-img-box img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
-        .course-card:hover .course-img-box img { transform: scale(1.05); }
-        .course-info { padding: 15px 20px; flex: 1; display: flex; flex-direction: column; }
-        .course-name { font-size: 18px; font-weight: 700; color: #444; margin-bottom: 5px; }
-        .course-cat-badge { font-size: 11px; background: #e3f2fd; color: #1976d2; padding: 3px 10px; border-radius: 20px; width: fit-content; margin-bottom: 8px; font-weight: 600; }
-        .course-desc { font-size: 13px; color: #666; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.5; }
+        .carousel-view::-webkit-scrollbar { display: none; }
 
         /* 🔥 Teacher Card */
         .teacher-card { 
@@ -123,6 +108,165 @@
 
         .divider { height: 1px; background: linear-gradient(90deg, transparent, #eee, transparent); margin: 0 auto; width: 80%; }
 
+        /* ===========================
+           ✅ Home Board List (แทน "วิชายอดนิยม")
+           =========================== */
+        .board-tools {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 10px 0 18px;
+        }
+        .board-search {
+            flex: 1;
+            min-width: 240px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 14px;
+            padding: 10px 14px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+        }
+        .board-search i { color: #999; }
+        .board-search input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 14px;
+            background: transparent;
+        }
+        .board-select {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 14px;
+            padding: 10px 12px;
+            font-weight: 600;
+            color: #555;
+            outline: none;
+        }
+        .board-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 10px 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .board-btn.primary { background: var(--primary-pink); color: #fff; box-shadow: 0 10px 25px rgba(250,66,153,0.18); }
+        .board-btn.primary:hover { background: var(--hover-pink); transform: translateY(-1px); }
+        .board-btn.ghost { background: #fff; color: #555; border: 1px solid #eee; }
+        .board-btn.ghost:hover { background: #fff0f6; color: var(--hover-pink); border-color: #ffd1e6; }
+
+        .board-list { display: flex; flex-direction: column; gap: 18px; }
+        .board-card {
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid #eee;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            display: flex;
+        }
+        .board-accent { width: 6px; background: #2ecc71; }
+        .board-body {
+            flex: 1;
+            padding: 18px 20px;
+            display: grid;
+            grid-template-columns: 1fr 240px 200px;
+            gap: 16px;
+            align-items: center;
+        }
+        .board-left { min-width: 0; }
+        .board-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+        .board-pill {
+            font-size: 12px;
+            font-weight: 700;
+            color: #ff2d78;
+            background: #fff0f6;
+            padding: 5px 12px;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+        .board-status {
+            font-size: 12px;
+            font-weight: 800;
+            color: #28a745;
+            background: #eafaf1;
+            padding: 5px 12px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        .board-title2 {
+            font-size: 18px;
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .board-desc {
+            font-size: 13px;
+            color: #777;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .board-mid {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            border-left: 1px solid #f1f1f1;
+            border-right: 1px solid #f1f1f1;
+            padding: 10px 12px;
+        }
+        .board-user { display: flex; align-items: center; gap: 10px; min-width: 0; }
+        .board-avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1px solid #eee; }
+        .board-name { font-weight: 800; color: #333; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+        .board-chat {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            border: 2px solid #ff2d78;
+            background: #fff;
+            color: #ff2d78;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .board-chat:hover { transform: translateY(-1px); background: #fff0f6; }
+
+        .board-right { display: flex; justify-content: flex-end; }
+        .timebox {
+            width: 200px;
+            background: #f4f5f7;
+            border-radius: 14px;
+            padding: 12px 14px;
+            text-align: center;
+        }
+        .timebox .row { display: flex; justify-content: center; align-items: center; gap: 8px; font-weight: 900; color: #333; margin-bottom: 6px; }
+        .timebox .small { font-size: 13px; color: #666; font-weight: 800; }
+        .timebox .platform { margin-top: 6px; font-size: 13px; color: #ff2d78; font-weight: 900; }
+
+        @media (max-width: 1000px) {
+            .board-body { grid-template-columns: 1fr; }
+            .board-mid { border: none; justify-content: space-between; }
+            .board-right { justify-content: flex-start; }
+            .timebox { width: 100%; text-align: left; }
+            .timebox .row, .timebox .small { justify-content: flex-start; }
+        }
+
         /* --- UPDATED CHAT UI (Consistent with Tutor Page) --- */
         .chat-toggle-btn { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #fa4299; color: white; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; z-index: 9999; transition: transform 0.3s; }
         .chat-toggle-btn:hover { transform: scale(1.1); }
@@ -136,7 +280,6 @@
             z-index: 9999; border: 1px solid #eee;
         }
         
-        /* Chat Header */
         .chat-header { 
             background: #fa4299; color: white; padding: 15px; 
             font-weight: bold; display: flex; justify-content: space-between; 
@@ -148,10 +291,8 @@
         .chat-close { cursor: pointer; font-size: 20px; opacity: 0.8; }
         .chat-close:hover { opacity: 1; }
 
-        /* Views */
         .view-section { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* Inbox View */
         .inbox-list { flex: 1; overflow-y: auto; }
         .inbox-item { display: flex; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f5f5f5; cursor: pointer; transition: 0.2s; }
         .inbox-item:hover { background: #fff0f5; }
@@ -160,7 +301,6 @@
         .inbox-name { font-weight: 600; font-size: 14px; color: #333; margin-bottom: 3px; }
         .inbox-last-msg { font-size: 12px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Messages View */
         .chat-messages { 
             flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; 
             display: flex; flex-direction: column; gap: 10px; 
@@ -170,7 +310,6 @@
         .msg-row.me { justify-content: flex-end; }
         .msg-row.other { justify-content: flex-start; }
         
-        /* --- จุดที่แก้ไขหลัก (เหมือน Tutor.html) --- */
         .msg-row > div {
             max-width: 75%; 
             display: flex;
@@ -190,8 +329,6 @@
             font-size: 14px;
             line-height: 1.5;
             position: relative;
-            
-            /* ✅ แก้ปัญหาตัวอักษรตกบรรทัด */
             word-wrap: break-word;
             word-break: break-word; 
             overflow-wrap: anywhere; 
@@ -208,15 +345,14 @@
         .chat-send-btn { background: transparent; color: #fa4299; border: none; font-size: 20px; cursor: pointer; padding: 5px; transition: 0.2s; }
         .chat-send-btn:hover { transform: scale(1.1); }
         
-        /* ลิ้งก์ในแชท */
         .msg-bubble a { color: inherit; font-weight: bold; text-decoration: underline; }
         .msg-row.other .msg-bubble a { color: #007bff; }
         .msg-row.me .msg-bubble a { color: #fff; }
-
     </style>
 </head>
 <body>
 
+    <!-- NAV (คงเดิม) -->
     <nav>
         <div class="nav-left">
             <a href="main.html" class="nav-logo">
@@ -266,62 +402,48 @@
             <p class="welcome-subtitle">พื้นที่สำหรับหาเพื่อนเรียน ติวหนังสือ และแลกเปลี่ยนความรู้</p>
         </div>
 
+        <!-- ===========================
+             ✅ แทน "วิชายอดนิยม" ด้วย "ประกาศล่าสุดจากบอร์ด"
+             =========================== -->
         <div class="section-wrapper">
             <div class="section-header">
-                <h2 class="section-title">วิชายอดนิยม</h2>
-                <div class="slider-controls">
-                    <div class="slider-btn" onclick="scrollContainer('courses', -1)"><i class="fas fa-chevron-left"></i></div>
-                    <div class="slider-btn" onclick="scrollContainer('courses', 1)"><i class="fas fa-chevron-right"></i></div>
+                <h2 class="section-title">ประกาศล่าสุดจากบอร์ด</h2>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <button class="board-btn ghost" onclick="window.location.href='dashboard.html'">
+                        <i class="fa-solid fa-table-columns"></i> ดูทั้งหมด
+                    </button>
+                    <button class="board-btn primary" onclick="window.location.href='dashboard.html?create=1'">
+                        <i class="fa-solid fa-plus"></i> ลงประกาศใหม่
+                    </button>
                 </div>
             </div>
 
-            <div class="carousel-view" id="courses">
-                <a href="dashboard.html" class="course-card">
-                    <div class="course-img-box"><img src="https://placehold.co/400x300/ffebee/ff2d78?text=ENG" alt="English"></div>
-                    <div class="course-info">
-                        <span class="course-cat-badge">ภาษาต่างประเทศ</span>
-                        <div class="course-name">ภาษาอังกฤษ</div>
-                        <div class="course-desc">รวมกลุ่มติว TOEIC, IELTS หรือฝึกสนทนาภาษาอังกฤษพื้นฐาน</div>
-                    </div>
-                </a>
-                <a href="dashboard.html" class="course-card">
-                    <div class="course-img-box"><img src="https://placehold.co/400x300/e3f2fd/1976d2?text=MATH" alt="Math"></div>
-                    <div class="course-info">
-                        <span class="course-cat-badge">คณิตศาสตร์</span>
-                        <div class="course-name">คณิตศาสตร์</div>
-                        <div class="course-desc">แคลคูลัส, สถิติ, ตรรกศาสตร์ สำหรับมัธยมปลายและมหาวิทยาลัย</div>
-                    </div>
-                </a>
-                <a href="dashboard.html" class="course-card">
-                    <div class="course-img-box"><img src="https://placehold.co/400x300/e8f5e9/388e3c?text=SCI" alt="Science"></div>
-                    <div class="course-info">
-                        <span class="course-cat-badge">วิทยาศาสตร์</span>
-                        <div class="course-name">วิทยาศาสตร์</div>
-                        <div class="course-desc">ฟิสิกส์ เคมี ชีวะ ดาราศาสตร์ และการทดลองต่างๆ</div>
-                    </div>
-                </a>
-                <a href="dashboard.html" class="course-card">
-                    <div class="course-img-box"><img src="https://placehold.co/400x300/fff3e0/f57c00?text=PHY" alt="Physics"></div>
-                    <div class="course-info">
-                        <span class="course-cat-badge">ฟิสิกส์</span>
-                        <div class="course-name">ฟิสิกส์</div>
-                        <div class="course-desc">กลศาสตร์ ไฟฟ้า คลื่น และฟิสิกส์ยุคใหม่</div>
-                    </div>
-                </a>
-                <a href="dashboard.html" class="course-card">
-                    <div class="course-img-box"><img src="https://placehold.co/400x300/f3e5f5/7b1fa2?text=BIO" alt="Biology"></div>
-                    <div class="course-info">
-                        <span class="course-cat-badge">ชีววิทยา</span>
-                        <div class="course-name">ชีววิทยา</div>
-                        <div class="course-desc">ระบบร่างกาย พืช พันธุศาสตร์ และสิ่งแวดล้อม</div>
-                    </div>
-                </a>
+            <div class="board-tools">
+                <div class="board-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input id="boardSearch" placeholder="ค้นหาหัวข้อ/คำอธิบาย/ชื่อผู้โพสต์..." />
+                </div>
+
+                <select id="boardSort" class="board-select">
+                    <option value="newest">เรียง: ล่าสุด</option>
+                    <option value="oldest">เรียง: เก่าสุด</option>
+                    <option value="title">เรียง: ชื่อประกาศ A-Z</option>
+                </select>
+
+                <button class="board-btn ghost" onclick="reloadHomeBoard()">
+                    <i class="fa-solid fa-rotate"></i> รีเฟรช
+                </button>
+            </div>
+
+            <div class="board-list" id="homeBoardList">
+                <div style="width:100%; text-align:center; color:#999; padding:20px;">กำลังโหลดประกาศ...</div>
             </div>
         </div>
 
         <div class="divider"></div>
         <br><br>
 
+        <!-- ติวเตอร์แนะนำ (คงเดิม) -->
         <div class="section-wrapper">
             <div class="section-header">
                 <h2 class="section-title">ติวเตอร์แนะนำ</h2>
@@ -337,6 +459,7 @@
         </div>
     </div>
 
+    <!-- CHAT (คงเดิม 100%) -->
     <div class="chat-toggle-btn" onclick="toggleChat()">
         <i class="fas fa-comment-dots"></i>
     </div>
@@ -369,9 +492,19 @@
         const BASE_API = 'http://localhost:3000'; 
         let myFollowingList = [];
 
+        // เก็บประกาศเพื่อค้นหา/เรียงในหน้าแรก
+        let HOME_POSTS = [];
+
         document.addEventListener('DOMContentLoaded', () => {
             checkLoginStatus(); 
+            loadHomeBoard();           // ✅ เพิ่ม
             loadRecommendedTutors();
+
+            // search / sort events
+            const s = document.getElementById('boardSearch');
+            const sort = document.getElementById('boardSort');
+            if (s) s.addEventListener('input', renderHomeBoard);
+            if (sort) sort.addEventListener('change', renderHomeBoard);
 
             if(localStorage.getItem('currentUser')) {
                 loadNotifications();
@@ -387,15 +520,176 @@
             });
         });
 
+        // ==========================
+        // ✅ HOME BOARD (ดึงจาก dashboard)
+        // ==========================
+        function reloadHomeBoard(){
+            loadHomeBoard(true);
+        }
+
+        async function loadHomeBoard(force=false){
+            const el = document.getElementById('homeBoardList');
+            if(!el) return;
+
+            el.innerHTML = `<div style="width:100%; text-align:center; color:#999; padding:20px;">กำลังโหลดประกาศ...</div>`;
+
+            try{
+                // ✅ เปลี่ยน endpoint ให้ตรงกับของคุณได้
+                const res = await fetch(`${BASE_API}/api/study-posts`);
+                const data = await res.json();
+
+                HOME_POSTS = Array.isArray(data) ? data : (data.items || []);
+                if(!HOME_POSTS.length){
+                    el.innerHTML = `<div style="width:100%; text-align:center; color:#999; padding:20px;">ยังไม่มีประกาศในระบบ</div>`;
+                    return;
+                }
+                renderHomeBoard();
+            }catch(err){
+                console.error("loadHomeBoard error:", err);
+                el.innerHTML = `<div style="width:100%; text-align:center; color:red; padding:20px;">โหลดประกาศไม่สำเร็จ</div>`;
+            }
+        }
+
+        function renderHomeBoard(){
+            const el = document.getElementById('homeBoardList');
+            if(!el) return;
+
+            const q = (document.getElementById('boardSearch')?.value || '').trim().toLowerCase();
+            const sort = document.getElementById('boardSort')?.value || 'newest';
+
+            // map fields แบบยืดหยุ่น (รองรับหลายชื่อ field)
+            const norm = (p) => {
+                const title = p.title || p.topic || p.name || 'ไม่มีหัวข้อ';
+                const desc = p.description || p.desc || p.detail || '';
+                const userName = p.ownerName || p.userName || p.username || p.nameOwner || 'Unknown';
+                const userAvatar = p.ownerAvatar || p.userAvatar || p.avatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+
+                const createdAt = p.createdAt || p.created_at || p.time || p.timestamp || null;
+                const dateText = p.dateText || p.date || p.day || '';
+                const timeText = p.timeText || p.timeRange || p.time || '';
+                const platform = p.platform || p.channel || p.meet || p.location || '';
+
+                // tag/หมวด (ถ้า API มี)
+                const tag = p.tag || p.category || p.subject || '';
+
+                // สถานะ (ถ้า API มี)
+                const status = p.statusText || p.status || (p.registered ? 'ลงทะเบียนแล้ว' : '');
+
+                const id = p.id || p.postId || p._id || null;
+                const ownerId = p.ownerId || p.userId || p.createdBy || null;
+
+                return { id, ownerId, title, desc, userName, userAvatar, createdAt, dateText, timeText, platform, tag, status };
+            };
+
+            let rows = HOME_POSTS.map(norm);
+
+            if(q){
+                rows = rows.filter(r =>
+                    (r.title || '').toLowerCase().includes(q) ||
+                    (r.desc || '').toLowerCase().includes(q) ||
+                    (r.userName || '').toLowerCase().includes(q)
+                );
+            }
+
+            if(sort === 'title'){
+                rows.sort((a,b)=> (a.title||'').localeCompare(b.title||''));
+            }else if(sort === 'oldest'){
+                rows.sort((a,b)=> new Date(a.createdAt||0) - new Date(b.createdAt||0));
+            }else{
+                rows.sort((a,b)=> new Date(b.createdAt||0) - new Date(a.createdAt||0));
+            }
+
+            // แสดงแค่ 6 รายการเพื่อความเร็ว
+            rows = rows.slice(0, 6);
+
+            el.innerHTML = rows.map(r => {
+                const accent = r.status ? '#2ecc71' : '#e9ecef';
+                const tagHTML = r.tag ? `<span class="board-pill">${r.tag}</span>` : '';
+                const statusHTML = r.status ? `<span class="board-status"><i class="fa-solid fa-circle-check"></i>${r.status}</span>` : '';
+
+                return `
+                <div class="board-card" onclick="openBoardDetail('${r.id || ''}')">
+                    <div class="board-accent" style="background:${accent}"></div>
+                    <div class="board-body">
+                        <div class="board-left">
+                            <div class="board-top">
+                                ${tagHTML}
+                                ${statusHTML}
+                            </div>
+                            <div class="board-title2">${escapeHtml(r.title)}</div>
+                            <div class="board-desc">${escapeHtml(r.desc)}</div>
+                        </div>
+
+                        <div class="board-mid" onclick="event.stopPropagation()">
+                            <div class="board-user">
+                                <img class="board-avatar" src="${r.userAvatar}">
+                                <div class="board-name" title="${escapeHtml(r.userName)}">${escapeHtml(r.userName)}</div>
+                            </div>
+                            <div class="board-chat" title="ทักแชท" onclick="openChatFromBoard(event,'${r.ownerId || ''}','${escapeAttr(r.userName)}','${escapeAttr(r.userAvatar)}')">
+                                <i class="fa-solid fa-comment-dots"></i>
+                            </div>
+                        </div>
+
+                        <div class="board-right">
+                            <div class="timebox">
+                                <div class="row"><i class="fa-regular fa-calendar"></i> ${escapeHtml(r.dateText || '-')}</div>
+                                <div class="small"><i class="fa-regular fa-clock"></i> ${escapeHtml(r.timeText || '-')}</div>
+                                <div class="platform">${escapeHtml(r.platform || '')}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            if(!rows.length){
+                el.innerHTML = `<div style="width:100%; text-align:center; color:#999; padding:20px;">ไม่พบประกาศที่ค้นหา</div>`;
+            }
+        }
+
+        function openBoardDetail(id){
+            // ✅ ถ้าคุณมีหน้ารายละเอียดจริง เปลี่ยนลิงก์ตรงนี้
+            // window.location.href = `board_detail.html?id=${id}`;
+            window.location.href = 'dashboard.html'; // แบบปลอดภัย: ส่งไปหน้าบอร์ด
+        }
+
+        function openChatFromBoard(event, ownerId, ownerName, ownerAvatar){
+            event.stopPropagation();
+
+            const userJson = localStorage.getItem("currentUser");
+            if (!userJson) {
+                Swal.fire('แจ้งเตือน', 'กรุณาเข้าสู่ระบบก่อนใช้งานแชท', 'warning');
+                return;
+            }
+
+            // เปิดกล่องแชทเดิม
+            toggleChat();
+
+            // ถ้ามี ownerId จริง -> เปิดแชทไปคนโพสต์ทันที
+            if(ownerId){
+                openChat({ partnerId: ownerId, partnerName: ownerName, partnerAvatar: ownerAvatar });
+            }else{
+                Swal.fire('แชท', 'โพสต์นี้ไม่มี ownerId ในข้อมูล API (ยังเปิดแชทอัตโนมัติไม่ได้)', 'info');
+            }
+        }
+
+        function escapeHtml(str=''){
+            return String(str)
+                .replaceAll('&','&amp;')
+                .replaceAll('<','&lt;')
+                .replaceAll('>','&gt;')
+                .replaceAll('"','&quot;')
+                .replaceAll("'","&#039;");
+        }
+        function escapeAttr(str=''){ return escapeHtml(str).replaceAll('\n',' '); }
+
         // --- Fetch & Render Tutors (Real Data) ---
         async function loadRecommendedTutors() {
             try {
-                // 1. ดึงข้อมูล User ทั้งหมด
                 const resUsers = await fetch(`${BASE_API}/api/users`);
                 let allUsers = [];
                 if(resUsers.ok) allUsers = await resUsers.json();
 
-                // 2. ดึงข้อมูล Follow ของเรา (ถ้า Login)
                 const userJson = localStorage.getItem('currentUser');
                 let currentUserId = null;
                 if(userJson) {
@@ -408,10 +702,8 @@
                     }
                 }
 
-                // 3. กรองเฉพาะ Tutor
                 const tutors = allUsers.filter(u => u.role === 'tutor' && String(u.id) !== String(currentUserId));
                 
-                // 4. Render
                 const container = document.getElementById('teachers');
                 if(tutors.length === 0) {
                     container.innerHTML = `<div style="text-align:center; width:100%; color:#999;">ยังไม่มีติวเตอร์ในระบบ</div>`;
@@ -442,7 +734,7 @@
         }
 
         async function toggleFollow(event, targetId, btn) {
-            event.stopPropagation(); // ไม่ให้คลิกทะลุไปเปิด Profile
+            event.stopPropagation();
             
             const userJson = localStorage.getItem('currentUser');
             if(!userJson) {
@@ -451,7 +743,6 @@
             }
             const user = JSON.parse(userJson);
 
-            // UI Feedback
             btn.disabled = true;
             const originalHTML = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
@@ -743,9 +1034,6 @@
             const container = document.getElementById('chatMessages');
             container.scrollTop = container.scrollHeight;
         }
-        
     </script>
-    
-
 </body>
 </html>

@@ -70,16 +70,6 @@
     "avatar": "https://ui-avatars.com/api/?name=Aom&background=random"
   },
   {
-    "id": "1768847353533",
-    "userId": "Aom",
-    "name": "Aom",
-    "password": "123",
-    "email": "panatchakorn1511@gmail.com",
-    "role": "student",
-    "bio": "สวัสดีคร่ะ",
-    "avatar": "https://ui-avatars.com/api/?name=Aom&background=random"
-  },
-  {
     "id": "1769064505743",
     "userId": "Guy",
     "name": "Guy",
@@ -88,5 +78,35 @@
     "role": "tutor",
     "bio": "ยังไม่มีข้อมูลแนะนำตัว...",
     "avatar": "https://ui-avatars.com/api/?name=Guy&background=random"
+  },
+  {
+    "id": "1769481611788",
+    "userId": "boss",
+    "name": "boss",
+    "password": "maenongpee",
+    "email": "1@gmail.com",
+    "role": "tutor",
+    "bio": "ยังไม่มีข้อมูลแนะนำตัว...",
+    "avatar": "https://ui-avatars.com/api/?name=boss&background=random"
+  },
+  {
+    "id": "1769482244612",
+    "userId": "test01",
+    "name": "test01",
+    "password": "123",
+    "email": "nichakul.sunnny@gmail.com",
+    "role": "student",
+    "bio": "ยังไม่มีข้อมูลแนะนำตัว...",
+    "avatar": "https://ui-avatars.com/api/?name=test01&background=random"
+  },
+  {
+    "id": "1769485618791",
+    "userId": "Roger",
+    "name": "Roger",
+    "password": "123",
+    "email": "Roger@gmail.com",
+    "role": "tutor",
+    "bio": "ยังไม่มีข้อมูลแนะนำตัว...",
+    "avatar": "https://ui-avatars.com/api/?name=Roger&background=random"
   }
 ]
